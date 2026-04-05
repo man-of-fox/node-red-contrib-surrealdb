@@ -95,6 +95,22 @@ Auto-fix lint issues:
 npm run lint:fix
 ```
 
+## Pre-commit Hook
+
+This project uses Husky + lint-staged to auto-fix staged formatting/lint issues before commit.
+
+One-time setup after install:
+
+```bash
+npm install
+npm run prepare
+```
+
+Hook behavior on commit:
+
+- JS files: `eslint --fix` then `prettier --write`
+- JSON/Markdown/YAML: `prettier --write`
+
 ## Current Scaffold Status
 
 - Base package metadata

@@ -13,7 +13,7 @@ module.exports = {
   rules: {
     "no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
     "no-undef": "error",
-    "semi": ["error", "always"],
-    "quotes": ["error", "double", { avoidEscape: true }]
+    semi: ["error", "always"],
+    quotes: ["error", "double", { avoidEscape: true }]
   }
 };

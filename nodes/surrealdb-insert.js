@@ -19,4 +19,3 @@ module.exports = function registerSurrealInsertNode(RED) {
 
   RED.nodes.registerType("surrealdb-insert", SurrealInsertNode);
 };
-

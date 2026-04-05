@@ -21,4 +21,3 @@ module.exports = function registerSurrealUpsertNode(RED) {
 
   RED.nodes.registerType("surrealdb-upsert", SurrealUpsertNode);
 };
-

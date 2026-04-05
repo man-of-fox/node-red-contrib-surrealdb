@@ -44,4 +44,3 @@ function makeJwt(payload) {
   const encode = (obj) => Buffer.from(JSON.stringify(obj)).toString("base64url");
   return `${encode(header)}.${encode(payload)}.sig`;
 }
-

@@ -82,4 +82,3 @@ test("SimplePool drain rejects waiters and destroys all clients", async () => {
   pool.release(c1);
   assert.equal(pool.available.length, 0);
 });
-

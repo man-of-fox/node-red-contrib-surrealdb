@@ -20,4 +20,3 @@ module.exports = function registerSurrealSelectNode(RED) {
 
   RED.nodes.registerType("surrealdb-select", SurrealSelectNode);
 };
-

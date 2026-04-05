@@ -20,4 +20,3 @@ module.exports = function registerSurrealDeleteNode(RED) {
 
   RED.nodes.registerType("surrealdb-delete", SurrealDeleteNode);
 };
-
