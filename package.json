@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "lint": "echo \"No lint configured\"",
-    "test": "echo \"No tests configured\""
+    "test": "node --test"
   },
   "dependencies": {
     "surrealdb": "^1.0.0"
@@ -27,4 +27,3 @@
     }
   }
 }
-

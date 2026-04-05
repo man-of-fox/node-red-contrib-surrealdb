@@ -67,6 +67,20 @@ npm install /path/to/node-red-contrib-surrealdb
 
 3. Restart Node-RED.
 
+## Tests
+
+Run unit tests:
+
+```bash
+npm test
+```
+
+Current unit coverage focuses on:
+
+- `lib/token-manager.js`
+- `lib/pool.js`
+- `lib/connection-manager.js` (core execution/error handling paths)
+
 ## Current Scaffold Status
 
 - Base package metadata
@@ -86,4 +100,3 @@ The scaffold is intentionally conservative and ready for iterative hardening.
 2. Validate auth flows (`signin`, token expiry, refresh failure fallback).
 3. Expand `LIVE` handling with durable re-subscribe and idempotent unsubscribe.
 4. Add metrics/log verbosity controls for troubleshooting in production flows.
-
