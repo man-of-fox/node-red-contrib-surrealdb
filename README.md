@@ -111,6 +111,14 @@ Hook behavior on commit:
 - JS files: `eslint --fix` then `prettier --write`
 - JSON/Markdown/YAML: `prettier --write`
 
+## CI
+
+GitHub Actions runs on push and pull requests and executes:
+
+- `npm ci`
+- `npm run lint`
+- `npm test`
+
 ## Current Scaffold Status
 
 - Base package metadata
