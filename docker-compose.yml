@@ -4,3 +4,9 @@ services:
     command: start --log info --unauthenticated memory
     ports:
       - "8000:8000"
+
+  surrealdb-auth:
+    image: surrealdb/surrealdb:v2.6.1
+    command: start --log info --user root --pass root memory
+    ports:
+      - "8001:8000"

@@ -81,6 +81,12 @@ Run integration tests (requires SurrealDB running):
 npm run test:integration
 ```
 
+Run authenticated integration tests:
+
+```bash
+npm run test:integration:auth
+```
+
 Current unit coverage focuses on:
 
 - `lib/token-manager.js`
@@ -107,6 +113,18 @@ Run integration tests:
 
 ```bash
 npm run test:integration
+```
+
+Start authenticated SurrealDB container:
+
+```bash
+docker compose up -d surrealdb-auth
+```
+
+Run authenticated integration tests:
+
+```bash
+npm run test:integration:auth
 ```
 
 Stop container:
@@ -153,6 +171,7 @@ GitHub Actions runs on push and pull requests and executes:
 - `npm run lint`
 - `npm test` (unit)
 - `npm run test:integration` (with SurrealDB service container)
+- `npm run test:integration:auth` (with authenticated SurrealDB service container)
 
 The workflow uses current Actions major versions and opts into the Node.js 24 JavaScript action runtime.
 

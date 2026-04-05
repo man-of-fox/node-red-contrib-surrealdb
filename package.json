@@ -17,7 +17,8 @@
     "lint:fix": "eslint . --fix",
     "test": "npm run test:unit",
     "test:unit": "node --test test/*.test.js",
-    "test:integration": "node --test test/integration/*.test.js",
+    "test:integration": "node --test test/integration/connection-manager.integration.test.js",
+    "test:integration:auth": "node --test test/integration/*auth*.test.js",
     "precommit:fix": "lint-staged"
   },
   "devDependencies": {
