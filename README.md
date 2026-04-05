@@ -75,11 +75,45 @@ Run unit tests:
 npm test
 ```
 
+Run integration tests (requires SurrealDB running):
+
+```bash
+npm run test:integration
+```
+
 Current unit coverage focuses on:
 
 - `lib/token-manager.js`
 - `lib/pool.js`
 - `lib/connection-manager.js` (core execution/error handling paths)
+
+Integration coverage includes:
+
+- real SurrealDB container connectivity
+- create/select/upsert/delete lifecycle
+- SQL query execution path via `ConnectionManager.query(...)`
+
+### Local Integration Test Setup
+
+Start SurrealDB container:
+
+```bash
+docker compose up -d surrealdb
+```
+
+The compose setup pins SurrealDB to `v2.6.1` (SDK-compatible) and runs in `--unauthenticated` mode for deterministic CI integration tests.
+
+Run integration tests:
+
+```bash
+npm run test:integration
+```
+
+Stop container:
+
+```bash
+docker compose down
+```
 
 ## Lint
 
@@ -117,7 +151,8 @@ GitHub Actions runs on push and pull requests and executes:
 
 - `npm ci`
 - `npm run lint`
-- `npm test`
+- `npm test` (unit)
+- `npm run test:integration` (with SurrealDB service container)
 
 The workflow uses current Actions major versions and opts into the Node.js 24 JavaScript action runtime.
 

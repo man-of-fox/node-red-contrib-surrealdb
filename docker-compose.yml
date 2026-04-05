@@ -1,0 +1,6 @@
+services:
+  surrealdb:
+    image: surrealdb/surrealdb:v2.6.1
+    command: start --log info --unauthenticated memory
+    ports:
+      - "8000:8000"

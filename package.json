@@ -15,7 +15,9 @@
     "format:check": "prettier . --check",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "node --test",
+    "test": "npm run test:unit",
+    "test:unit": "node --test test/*.test.js",
+    "test:integration": "node --test test/integration/*.test.js",
     "precommit:fix": "lint-staged"
   },
   "devDependencies": {
