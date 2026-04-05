@@ -1,0 +1,37 @@
+<script type="text/javascript">
+  RED.nodes.registerType("surrealdb-insert", {
+    category: "storage",
+    color: "#d8f3dc",
+    defaults: {
+      name: { value: "" },
+      connection: { value: "", type: "surrealdb-config", required: true },
+      table: { value: "", required: true }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "db.svg",
+    label: function () {
+      return this.name || "surrealdb insert";
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="surrealdb-insert">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-connection">Connection</label>
+    <input type="text" id="node-input-connection" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-table">Table</label>
+    <input type="text" id="node-input-table" />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="surrealdb-insert">
+  <p>Insert <code>msg.payload</code> into a table.</p>
+</script>
+

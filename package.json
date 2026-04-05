@@ -1,0 +1,30 @@
+{
+  "name": "node-red-contrib-surrealdb",
+  "version": "0.1.0",
+  "description": "Node-RED palette for SurrealDB with resilient connection handling",
+  "license": "MIT",
+  "main": "index.js",
+  "keywords": [
+    "node-red",
+    "surrealdb",
+    "database"
+  ],
+  "scripts": {
+    "lint": "echo \"No lint configured\"",
+    "test": "echo \"No tests configured\""
+  },
+  "dependencies": {
+    "surrealdb": "^1.0.0"
+  },
+  "node-red": {
+    "nodes": {
+      "surrealdb-config": "nodes/surrealdb-config.js",
+      "surrealdb-insert": "nodes/surrealdb-insert.js",
+      "surrealdb-upsert": "nodes/surrealdb-upsert.js",
+      "surrealdb-select": "nodes/surrealdb-select.js",
+      "surrealdb-delete": "nodes/surrealdb-delete.js",
+      "surrealdb-live": "nodes/surrealdb-live.js"
+    }
+  }
+}
+
