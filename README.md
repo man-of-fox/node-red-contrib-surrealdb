@@ -81,6 +81,20 @@ Current unit coverage focuses on:
 - `lib/pool.js`
 - `lib/connection-manager.js` (core execution/error handling paths)
 
+## Lint
+
+Run lint checks:
+
+```bash
+npm run lint
+```
+
+Auto-fix lint issues:
+
+```bash
+npm run lint:fix
+```
+
 ## Current Scaffold Status
 
 - Base package metadata

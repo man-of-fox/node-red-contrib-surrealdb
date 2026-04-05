@@ -10,8 +10,12 @@
     "database"
   ],
   "scripts": {
-    "lint": "echo \"No lint configured\"",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "node --test"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1"
   },
   "dependencies": {
     "surrealdb": "^1.0.0"
