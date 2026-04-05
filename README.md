@@ -87,6 +87,12 @@ Run authenticated integration tests:
 npm run test:integration:auth
 ```
 
+Run resilience integration tests (token refresh + reconnect):
+
+```bash
+npm run test:integration:resilience
+```
+
 Current unit coverage focuses on:
 
 - `lib/token-manager.js`
@@ -125,6 +131,13 @@ Run authenticated integration tests:
 
 ```bash
 npm run test:integration:auth
+```
+
+For resilience tests, run both containers:
+
+```bash
+docker compose up -d surrealdb surrealdb-auth
+npm run test:integration:resilience
 ```
 
 Stop container:
@@ -172,6 +185,7 @@ GitHub Actions runs on push and pull requests and executes:
 - `npm test` (unit)
 - `npm run test:integration` (with SurrealDB service container)
 - `npm run test:integration:auth` (with authenticated SurrealDB service container)
+- `npm run test:integration:resilience` (token refresh + dead connection recovery scenarios)
 
 The workflow uses current Actions major versions and opts into the Node.js 24 JavaScript action runtime.
 
