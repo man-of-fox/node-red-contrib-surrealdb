@@ -119,6 +119,8 @@ GitHub Actions runs on push and pull requests and executes:
 - `npm run lint`
 - `npm test`
 
+The workflow uses current Actions major versions and opts into the Node.js 24 JavaScript action runtime.
+
 ## Current Scaffold Status
 
 - Base package metadata
