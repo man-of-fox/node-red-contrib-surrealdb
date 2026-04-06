@@ -12,7 +12,13 @@
     outputs: 1,
     icon: "db.svg",
     label: function () {
-      return this.name || "surrealdb delete";
+      if (this.name) {
+        return this.name;
+      }
+      const table = (this.table || "").trim();
+      const recordId = (this.recordId || "").trim();
+      const target = recordId ? (recordId.includes(":") ? recordId : table ? `${table}:${recordId}` : recordId) : table;
+      return target ? `surrealdb delete (${target})` : "surrealdb delete";
     }
   });
 </script>

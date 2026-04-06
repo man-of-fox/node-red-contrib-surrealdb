@@ -11,7 +11,11 @@
     outputs: 1,
     icon: "db.svg",
     label: function () {
-      return this.name || "surrealdb live";
+      if (this.name) {
+        return this.name;
+      }
+      const target = (this.table || "").trim();
+      return target ? `surrealdb live (${target})` : "surrealdb live";
     }
   });
 </script>

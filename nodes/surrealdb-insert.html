@@ -12,7 +12,11 @@
     outputs: 1,
     icon: "db.svg",
     label: function () {
-      return this.name || "surrealdb insert";
+      if (this.name) {
+        return this.name;
+      }
+      const target = (this.table || "").trim();
+      return target ? `surrealdb insert (${target})` : "surrealdb insert";
     }
   });
 </script>
