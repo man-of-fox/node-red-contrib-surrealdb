@@ -1,0 +1,50 @@
+<script type="text/javascript">
+  RED.nodes.registerType("surrealdb-relate", {
+    category: "SurrealDB",
+    color: "#d8f3dc",
+    defaults: {
+      name: { value: "" },
+      connection: { value: "", type: "surrealdb-config", required: true },
+      from: { value: "" },
+      relation: { value: "", required: true },
+      to: { value: "" }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "db.svg",
+    label: function () {
+      return this.name || "surrealdb relate";
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="surrealdb-relate">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-connection">Connection</label>
+    <input type="text" id="node-input-connection" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-from">From</label>
+    <input type="text" id="node-input-from" placeholder="table:id" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-relation">Relation</label>
+    <input type="text" id="node-input-relation" placeholder="likes" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-to">To</label>
+    <input type="text" id="node-input-to" placeholder="table:id" />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="surrealdb-relate">
+  <p>
+    Create graph edges using <code>from -&gt; relation -&gt; to</code>. You can set values in node
+    options or override at runtime via <code>msg.from</code>, <code>msg.relation</code> and
+    <code>msg.to</code>. Edge content comes from <code>msg.payload</code>.
+  </p>
+</script>

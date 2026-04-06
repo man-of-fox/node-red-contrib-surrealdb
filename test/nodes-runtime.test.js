@@ -53,6 +53,73 @@ test("runtime insert node: sends query result to output", async () => {
   assert.deepEqual(msg.payload, [{ id: "users:1", name: "Ada" }]);
 });
 
+test("runtime relate node: creates edge using configured refs", async () => {
+  const manager = createFakeManager({
+    queryResult: [{ id: "likes:1", in: "users:alice", out: "movies:matrix" }]
+  });
+  const relateNode = requireNodeWithSharedStub("../nodes/surrealdb-relate.js", manager);
+
+  await loadFlow(
+    [relateNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-relate",
+        connection: "cfg",
+        from: "users:alice",
+        relation: "likes",
+        to: "movies:matrix",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const out = helper.getNode("n2");
+  const inNode = helper.getNode("n1");
+
+  const received = onceInput(out);
+  inNode.receive({ payload: { weight: 10 } });
+  await received;
+
+  assert.equal(manager.calls.length, 1);
+  assert.equal(manager.calls[0].method, "relate");
+  assert.deepEqual(manager.calls[0].args, [
+    "users:alice",
+    "likes",
+    "movies:matrix",
+    { weight: 10 }
+  ]);
+});
+
+test("runtime relate node: emits error when relation is missing", async () => {
+  const manager = createFakeManager();
+  const relateNode = requireNodeWithSharedStub("../nodes/surrealdb-relate.js", manager);
+
+  await loadFlow(
+    [relateNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-relate",
+        connection: "cfg",
+        from: "users:alice",
+        relation: "",
+        to: "movies:matrix",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const inNode = helper.getNode("n1");
+  const errCall = onceCallEvent(inNode, "call:error");
+  inNode.receive({ payload: {} });
+  await errCall;
+
+  assert.equal(manager.calls.length, 0);
+});
+
 test("runtime select node: uses msg.recordId override", async () => {
   const manager = createFakeManager({
     queryResult: [{ id: "users:2", name: "Grace" }]
@@ -555,6 +622,13 @@ function createFakeManager(options = {}) {
         },
         patch(target, data) {
           self.calls.push({ method: "patch", args: [target, data] });
+          if (options.executeError) {
+            throw options.executeError;
+          }
+          return options.queryResult;
+        },
+        relate(from, relation, to, data) {
+          self.calls.push({ method: "relate", args: [from, relation, to, data] });
           if (options.executeError) {
             throw options.executeError;
           }

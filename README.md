@@ -6,11 +6,12 @@ Node-RED palette for SurrealDB with robust connection handling, token refresh, r
 
 - Provide simple nodes for common SurrealDB operations:
   - `INSERT`
-- `UPSERT`
-- `MODIFY` (`update`, `merge`, `patch`)
-- `DELETE`
-- `SELECT`
-- `LIVE`
+  - `RELATE`
+  - `UPSERT`
+  - `MODIFY` (`update`, `merge`, `patch`)
+  - `DELETE`
+  - `SELECT`
+  - `LIVE`
 - Centralize all connection concerns in one config node:
   - connection lifecycle
   - health checks
@@ -45,6 +46,8 @@ Node-RED palette for SurrealDB with robust connection handling, token refresh, r
 │   ├── surrealdb-insert.js
 │   ├── surrealdb-live.html
 │   ├── surrealdb-live.js
+│   ├── surrealdb-relate.html
+│   ├── surrealdb-relate.js
 │   ├── surrealdb-modify.html
 │   ├── surrealdb-modify.js
 │   ├── surrealdb-select.html
@@ -101,7 +104,7 @@ Current unit coverage focuses on:
 - `lib/token-manager.js`
 - `lib/pool.js`
 - `lib/connection-manager.js` (core execution/error handling paths)
-- Node-RED runtime behavior for `insert`, `select`, and `delete` nodes
+- Node-RED runtime behavior for `insert`, `relate`, `select`, `delete`, `modify`, and `live` nodes
 
 Integration coverage includes:
 
