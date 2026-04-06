@@ -19,7 +19,7 @@ services:
     command: >
       /bin/sh -lc "
       cd /data &&
-      npm install /workspace/node-red-contrib-surrealdb &&
+      npm install --force /workspace/node-red-contrib-surrealdb &&
       npm start -- --userDir /data
       "
 
