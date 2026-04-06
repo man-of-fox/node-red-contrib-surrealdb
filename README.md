@@ -98,6 +98,7 @@ Current unit coverage focuses on:
 - `lib/token-manager.js`
 - `lib/pool.js`
 - `lib/connection-manager.js` (core execution/error handling paths)
+- Node-RED runtime behavior for `insert`, `select`, and `delete` nodes
 
 Integration coverage includes:
 
