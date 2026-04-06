@@ -32,8 +32,23 @@
 </script>
 
 <script type="text/html" data-help-name="surrealdb-live">
+  <p>Startet oder stoppt eine LIVE-Subscription auf einer Tabelle.</p>
+  <h3>Inputs</h3>
+  <ul>
+    <li><code>msg.command</code>: <code>start</code> oder <code>stop</code></li>
+    <li>Ohne <code>msg.command</code> wird standardmäßig gestartet</li>
+  </ul>
+  <h3>Outputs</h3>
+  <ul>
+    <li>Start-Ack mit Subscription-Metadaten</li>
+    <li>Live-Events bei Änderungen in der Tabelle</li>
+    <li>Stop-Ack mit <code>stopped: true</code></li>
+  </ul>
+  <h3>Beispiel</h3>
+  <pre>{ "command": "start" }</pre>
+  <h3>Original-Doku</h3>
   <p>
-    Start or stop a LIVE query. Use <code>msg.command</code> set to <code>start</code> or
-    <code>stop</code>.
+    <a href="https://surrealdb.com/docs/sdk/javascript/methods/live" target="_blank">JS SDK: live()</a><br />
+    <a href="https://surrealdb.com/docs/surrealql/statements/live" target="_blank">SurrealQL: LIVE SELECT</a>
   </p>
 </script>

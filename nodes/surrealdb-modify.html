@@ -46,8 +46,33 @@
 </script>
 
 <script type="text/html" data-help-name="surrealdb-modify">
+  <p>Ändert bestehende Datensätze per <code>merge</code>, <code>update</code> oder <code>patch</code>.</p>
+  <h3>Inputs</h3>
+  <ul>
+    <li><code>msg.payload</code>: Änderungsdaten</li>
+    <li><code>msg.mode</code> (optional): überschreibt Node-Mode</li>
+    <li><code>msg.table</code>, <code>msg.recordId</code>/<code>msg.id</code> (optional)</li>
+  </ul>
+  <h3>Modi</h3>
+  <ul>
+    <li><code>merge</code>: partielle Zusammenführung</li>
+    <li><code>update</code>: ersetzt den Record-Inhalt</li>
+    <li><code>patch</code>: JSON-Patch-Operationen; benötigt Record-ID</li>
+  </ul>
+  <h3>Beispiel (patch)</h3>
+  <pre>{
+  "table": "person",
+  "recordId": "tobie",
+  "mode": "patch",
+  "payload": [
+    { "op": "replace", "path": "/mail", "value": "new@example.com" }
+  ]
+}</pre>
+  <h3>Original-Doku</h3>
   <p>
-    Modify records using mode <code>merge</code>, <code>update</code> or <code>patch</code>. Use
-    <code>msg.mode</code> to override node mode at runtime.
+    <a href="https://surrealdb.com/docs/sdk/javascript/methods/merge" target="_blank">JS SDK: merge()</a><br />
+    <a href="https://surrealdb.com/docs/sdk/javascript/methods/update" target="_blank">JS SDK: update()</a><br />
+    <a href="https://surrealdb.com/docs/sdk/javascript/methods/patch" target="_blank">JS SDK: patch()</a><br />
+    <a href="https://surrealdb.com/docs/surrealql/statements/update" target="_blank">SurrealQL: UPDATE</a>
   </p>
 </script>

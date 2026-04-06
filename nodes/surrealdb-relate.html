@@ -42,9 +42,26 @@
 </script>
 
 <script type="text/html" data-help-name="surrealdb-relate">
+  <p>Erstellt Graph-Kanten mit <code>from -&gt; relation -&gt; to</code>.</p>
+  <h3>Inputs</h3>
+  <ul>
+    <li><code>msg.from</code> (optional): z. B. <code>person:alice</code></li>
+    <li><code>msg.relation</code> (optional): z. B. <code>likes</code></li>
+    <li><code>msg.to</code> (optional): z. B. <code>movie:matrix</code></li>
+    <li><code>msg.payload</code>: optionale Kanten-Daten</li>
+  </ul>
+  <h3>Hinweis</h3>
+  <p>Node-Felder können durch <code>msg.from</code>, <code>msg.relation</code> und <code>msg.to</code> überschrieben werden.</p>
+  <h3>Beispiel</h3>
+  <pre>{
+  "from": "person:alice",
+  "relation": "likes",
+  "to": "movie:matrix",
+  "payload": { "rating": 9 }
+}</pre>
+  <h3>Original-Doku</h3>
   <p>
-    Create graph edges using <code>from -&gt; relation -&gt; to</code>. You can set values in node
-    options or override at runtime via <code>msg.from</code>, <code>msg.relation</code> and
-    <code>msg.to</code>. Edge content comes from <code>msg.payload</code>.
+    <a href="https://surrealdb.com/docs/surrealql/statements/relate" target="_blank">SurrealQL: RELATE</a><br />
+    <a href="https://surrealdb.com/docs/sdk/javascript" target="_blank">JS SDK: Overview</a>
   </p>
 </script>

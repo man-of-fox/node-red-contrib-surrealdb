@@ -40,8 +40,28 @@
 </script>
 
 <script type="text/html" data-help-name="surrealdb-insert">
+  <p>Schreibt <code>msg.payload</code> in eine Tabelle.</p>
+  <h3>Inputs</h3>
+  <ul>
+    <li><code>msg.payload</code>: Objekt oder Array von Objekten</li>
+    <li><code>msg.table</code> (optional): überschreibt Tabellenfeld aus der Node</li>
+    <li><code>msg.mode</code> (optional): <code>insert</code> oder <code>create</code></li>
+  </ul>
+  <h3>Modi</h3>
+  <ul>
+    <li><code>insert</code>: Standard-Insert</li>
+    <li><code>create</code>: Create-Verhalten über SDK</li>
+  </ul>
+  <h3>Beispiel</h3>
+  <pre>{
+  "table": "person",
+  "mode": "insert",
+  "payload": { "name": "Ada", "active": true }
+}</pre>
+  <h3>Original-Doku</h3>
   <p>
-    Write <code>msg.payload</code> into a table using mode <code>insert</code> or
-    <code>create</code>. Use <code>msg.mode</code> to override the node mode at runtime.
+    <a href="https://surrealdb.com/docs/sdk/javascript/methods/insert" target="_blank">JS SDK: insert()</a><br />
+    <a href="https://surrealdb.com/docs/sdk/javascript/methods/create" target="_blank">JS SDK: create()</a><br />
+    <a href="https://surrealdb.com/docs/surrealql/statements/insert" target="_blank">SurrealQL: INSERT</a>
   </p>
 </script>

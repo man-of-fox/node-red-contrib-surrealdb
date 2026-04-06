@@ -37,5 +37,25 @@
 </script>
 
 <script type="text/html" data-help-name="surrealdb-select">
-  <p>Select records by table or specific record id.</p>
+  <p>Liest Records einer Tabelle oder genau einen Record per ID.</p>
+  <h3>Inputs</h3>
+  <ul>
+    <li><code>msg.table</code> (optional)</li>
+    <li><code>msg.recordId</code> oder <code>msg.id</code> (optional)</li>
+  </ul>
+  <h3>Verhalten</h3>
+  <ul>
+    <li>Nur <code>table</code>: liefert Tabelle als Liste</li>
+    <li><code>table + recordId</code> oder volle Record-ID: liefert einzelnen Record</li>
+  </ul>
+  <h3>Beispiel</h3>
+  <pre>{
+  "table": "person",
+  "recordId": "tobie"
+}</pre>
+  <h3>Original-Doku</h3>
+  <p>
+    <a href="https://surrealdb.com/docs/sdk/javascript/methods/select" target="_blank">JS SDK: select()</a><br />
+    <a href="https://surrealdb.com/docs/surrealql/statements/select" target="_blank">SurrealQL: SELECT</a>
+  </p>
 </script>

@@ -57,6 +57,12 @@ Node-RED palette for SurrealDB with robust connection handling, token refresh, r
 └── package.json
 ```
 
+## Node Documentation
+
+Detailed node descriptions with examples and official SurrealDB references:
+
+- [docs/nodes.md](docs/nodes.md)
+
 ## Install (local development)
 
 1. Install dependencies:

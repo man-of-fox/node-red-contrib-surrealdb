@@ -37,5 +37,25 @@
 </script>
 
 <script type="text/html" data-help-name="surrealdb-delete">
-  <p>Delete records by table or specific record id.</p>
+  <p>Löscht eine ganze Tabelle oder einen einzelnen Record.</p>
+  <h3>Inputs</h3>
+  <ul>
+    <li><code>msg.table</code> (optional)</li>
+    <li><code>msg.recordId</code> oder <code>msg.id</code> (optional)</li>
+  </ul>
+  <h3>Verhalten</h3>
+  <ul>
+    <li>Nur <code>table</code>: löscht alle Datensätze der Tabelle</li>
+    <li><code>table + recordId</code> oder volle Record-ID: löscht nur diesen Record</li>
+  </ul>
+  <h3>Beispiel</h3>
+  <pre>{
+  "table": "person",
+  "recordId": "tobie"
+}</pre>
+  <h3>Original-Doku</h3>
+  <p>
+    <a href="https://surrealdb.com/docs/sdk/javascript/methods/delete" target="_blank">JS SDK: delete()</a><br />
+    <a href="https://surrealdb.com/docs/surrealql/statements/delete" target="_blank">SurrealQL: DELETE</a>
+  </p>
 </script>

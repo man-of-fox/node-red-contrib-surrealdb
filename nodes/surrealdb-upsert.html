@@ -37,5 +37,27 @@
 </script>
 
 <script type="text/html" data-help-name="surrealdb-upsert">
-  <p>Upsert <code>msg.payload</code> into table or record target.</p>
+  <p>Führt ein Upsert auf Tabelle oder Record-Target aus.</p>
+  <h3>Inputs</h3>
+  <ul>
+    <li><code>msg.payload</code>: Datensatz-Inhalt</li>
+    <li><code>msg.table</code> (optional)</li>
+    <li><code>msg.recordId</code> oder <code>msg.id</code> (optional)</li>
+  </ul>
+  <h3>Record-Target</h3>
+  <p>
+    Du kannst entweder <code>table + recordId</code> angeben (z. B. <code>person</code> + <code>tobie</code>)
+    oder direkt eine volle Record-ID wie <code>person:tobie</code>.
+  </p>
+  <h3>Beispiel</h3>
+  <pre>{
+  "table": "person",
+  "recordId": "tobie",
+  "payload": { "name": "Tobie", "active": true }
+}</pre>
+  <h3>Original-Doku</h3>
+  <p>
+    <a href="https://surrealdb.com/docs/sdk/javascript/methods/upsert" target="_blank">JS SDK: upsert()</a><br />
+    <a href="https://surrealdb.com/docs/surrealql/statements/upsert" target="_blank">SurrealQL: UPSERT</a>
+  </p>
 </script>

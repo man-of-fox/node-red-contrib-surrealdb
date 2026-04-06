@@ -93,5 +93,24 @@
 </script>
 
 <script type="text/html" data-help-name="surrealdb-config">
-  <p>Shared SurrealDB connection settings including auth, retry and pool behavior.</p>
+  <p>Gemeinsame SurrealDB-Verbindung für alle SurrealDB-Nodes.</p>
+  <h3>Wichtige Felder</h3>
+  <ul>
+    <li><code>url</code>: WebSocket-Endpoint, z. B. <code>ws://surrealdb:8000</code></li>
+    <li><code>namespace</code> und <code>database</code></li>
+    <li><code>authType</code>: <code>credentials</code> oder <code>token</code></li>
+    <li>Pool: <code>minConnections</code>, <code>maxConnections</code></li>
+    <li>Resilience: <code>healthCheckIntervalMs</code>, <code>retryAttempts</code>, <code>retryDelayMs</code></li>
+    <li>Token-Handling: <code>tokenRefreshSkewSec</code></li>
+  </ul>
+  <h3>Hinweis</h3>
+  <p>
+    Für lokale Tests ohne Auth in SurrealDB können <code>username</code>, <code>password</code> und
+    <code>token</code> leer bleiben.
+  </p>
+  <h3>Original-Doku</h3>
+  <p>
+    <a href="https://surrealdb.com/docs/sdk/javascript/concepts/connecting-to-surrealdb" target="_blank">SurrealDB JS SDK: Connecting</a><br />
+    <a href="https://surrealdb.com/docs/sdk/javascript" target="_blank">SurrealDB JS SDK: Overview</a>
+  </p>
 </script>
