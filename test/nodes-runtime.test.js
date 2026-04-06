@@ -86,6 +86,104 @@ test("runtime select node: uses msg.recordId override", async () => {
   assert.deepEqual(manager.calls[0].args, ["users:from-msg"]);
 });
 
+test("runtime select node: uses configured recordId from node options", async () => {
+  const manager = createFakeManager({
+    queryResult: [{ id: "users:cfg-id", name: "Config" }]
+  });
+  const selectNode = requireNodeWithSharedStub("../nodes/surrealdb-select.js", manager);
+
+  await loadFlow(
+    [selectNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-select",
+        connection: "cfg",
+        table: "users",
+        recordId: "cfg-id",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const out = helper.getNode("n2");
+  const inNode = helper.getNode("n1");
+
+  const received = onceInput(out);
+  inNode.receive({});
+  await received;
+
+  assert.equal(manager.calls.length, 1);
+  assert.equal(manager.calls[0].method, "select");
+  assert.deepEqual(manager.calls[0].args, ["users:cfg-id"]);
+});
+
+test("runtime select node: accepts full recordId without table", async () => {
+  const manager = createFakeManager({
+    queryResult: [{ id: "users:full-id", name: "Full" }]
+  });
+  const selectNode = requireNodeWithSharedStub("../nodes/surrealdb-select.js", manager);
+
+  await loadFlow(
+    [selectNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-select",
+        connection: "cfg",
+        table: "",
+        recordId: "users:full-id",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const out = helper.getNode("n2");
+  const inNode = helper.getNode("n1");
+
+  const received = onceInput(out);
+  inNode.receive({});
+  await received;
+
+  assert.equal(manager.calls.length, 1);
+  assert.equal(manager.calls[0].method, "select");
+  assert.deepEqual(manager.calls[0].args, ["users:full-id"]);
+});
+
+test("runtime select node: supports recordId object from previous result", async () => {
+  const manager = createFakeManager({
+    queryResult: [{ id: "users:2", name: "Grace" }]
+  });
+  const selectNode = requireNodeWithSharedStub("../nodes/surrealdb-select.js", manager);
+
+  await loadFlow(
+    [selectNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-select",
+        connection: "cfg",
+        table: "users",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const out = helper.getNode("n2");
+  const inNode = helper.getNode("n1");
+
+  const received = onceInput(out);
+  inNode.receive({ recordId: { tb: "users", id: "obj-123" } });
+  await received;
+
+  assert.equal(manager.calls.length, 1);
+  assert.equal(manager.calls[0].method, "select");
+  assert.deepEqual(manager.calls[0].args, ["users:obj-123"]);
+});
+
 test("runtime delete node: deletes whole table when no record id provided", async () => {
   const manager = createFakeManager({
     queryResult: [{ ok: true }]
@@ -356,6 +454,25 @@ function requireNodeWithSharedStub(nodeModulePath, manager) {
 }
 
 function createSharedStub(manager) {
+  const resolveTable = (nodeConfig, msg) => msg.table || nodeConfig.table || "";
+  const resolveId = (nodeConfig, msg) =>
+    msg.recordId || msg.recordid || msg.id || nodeConfig.recordId || nodeConfig.recordid || "";
+  const resolveTarget = (nodeConfig, msg) => {
+    const recordId = resolveId(nodeConfig, msg);
+    const table = resolveTable(nodeConfig, msg);
+    if (!recordId) {
+      return table;
+    }
+    const normalized =
+      recordId && typeof recordId === "object" && recordId.tb && recordId.id !== undefined
+        ? `${recordId.tb}:${String(recordId.id)}`
+        : String(recordId).trim();
+    if (normalized.includes(":")) {
+      return normalized;
+    }
+    return table ? `${table}:${normalized}` : "";
+  };
+
   return {
     setupNodeInput(node, _RED, config, handler) {
       node.on("input", async (msg, send, done) => {
@@ -375,11 +492,14 @@ function createSharedStub(manager) {
         }
       });
     },
-    resolveTable(nodeConfig, msg) {
-      return msg.table || nodeConfig.table;
+    resolveTable,
+    resolveId,
+    hasRecordId(nodeConfig, msg) {
+      return Boolean(resolveId(nodeConfig, msg));
     },
-    resolveId(nodeConfig, msg) {
-      return msg.recordId || msg.id || nodeConfig.recordId || "";
+    resolveTarget,
+    toSdkTarget(target) {
+      return target;
     }
   };
 }
