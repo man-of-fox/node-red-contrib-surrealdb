@@ -2,6 +2,11 @@
 
 Node-RED palette for SurrealDB with robust connection handling, token refresh, retry logic, and optional connection validation.
 
+## Compatibility
+
+- SurrealDB server: tested with `v2.6.x` (integration tests currently pinned to `v2.6.1`)
+- SurrealDB JavaScript SDK: `v1.x`
+
 ## Goals
 
 - Provide simple nodes for common SurrealDB operations:
