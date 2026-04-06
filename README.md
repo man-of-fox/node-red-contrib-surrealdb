@@ -198,6 +198,9 @@ Start a local UI test stack (Node-RED + SurrealDB):
 docker compose -f docker-compose.ui-test.yml up -d
 ```
 
+All `test/flows/*.json` files are automatically merged into Node-RED as additional tabs.
+If no tabs exist yet, a default `Flow 1` tab is kept.
+
 Open Node-RED UI:
 
 ```text
