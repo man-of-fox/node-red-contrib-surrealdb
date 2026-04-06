@@ -13,8 +13,7 @@ module.exports = function registerSurrealSelectNode(RED) {
       }
       const recordId = resolveId(config, msg);
       const target = recordId ? `${table}:${recordId}` : table;
-      const sql = `SELECT * FROM ${target};`;
-      return manager.query(sql, {});
+      return manager.execute((client) => client.select(target));
     });
   }
 

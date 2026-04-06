@@ -14,8 +14,7 @@ module.exports = function registerSurrealUpsertNode(RED) {
       const recordId = resolveId(config, msg);
       const target = recordId ? `${table}:${recordId}` : table;
       const data = msg.payload;
-      const sql = `UPSERT ${target} CONTENT $data;`;
-      return manager.query(sql, { data });
+      return manager.execute((client) => client.upsert(target, data));
     });
   }
 

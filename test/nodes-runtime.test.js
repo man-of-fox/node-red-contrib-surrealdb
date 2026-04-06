@@ -48,8 +48,8 @@ test("runtime insert node: sends query result to output", async () => {
   const msg = await received;
 
   assert.equal(manager.calls.length, 1);
-  assert.equal(manager.calls[0].sql, "INSERT INTO users CONTENT $data;");
-  assert.deepEqual(manager.calls[0].vars, { data: { name: "Ada" } });
+  assert.equal(manager.calls[0].method, "insert");
+  assert.deepEqual(manager.calls[0].args, ["users", { name: "Ada" }]);
   assert.deepEqual(msg.payload, [{ id: "users:1", name: "Ada" }]);
 });
 
@@ -82,7 +82,8 @@ test("runtime select node: uses msg.recordId override", async () => {
   await received;
 
   assert.equal(manager.calls.length, 1);
-  assert.equal(manager.calls[0].sql, "SELECT * FROM users:from-msg;");
+  assert.equal(manager.calls[0].method, "select");
+  assert.deepEqual(manager.calls[0].args, ["users:from-msg"]);
 });
 
 test("runtime delete node: deletes whole table when no record id provided", async () => {
@@ -113,7 +114,8 @@ test("runtime delete node: deletes whole table when no record id provided", asyn
   await received;
 
   assert.equal(manager.calls.length, 1);
-  assert.equal(manager.calls[0].sql, "DELETE users;");
+  assert.equal(manager.calls[0].method, "delete");
+  assert.deepEqual(manager.calls[0].args, ["users"]);
 });
 
 test("runtime insert node: emits error when table is missing", async () => {
@@ -222,12 +224,43 @@ function createSharedStub(manager) {
 function createFakeManager(options = {}) {
   return {
     calls: [],
-    async query(sql, vars) {
-      this.calls.push({ sql, vars });
-      if (options.queryError) {
-        throw options.queryError;
+    async execute(operationFn) {
+      const self = this;
+      const fakeClient = {
+        insert(table, data) {
+          self.calls.push({ method: "insert", args: [table, data] });
+          if (options.executeError) {
+            throw options.executeError;
+          }
+          return options.queryResult;
+        },
+        select(target) {
+          self.calls.push({ method: "select", args: [target] });
+          if (options.executeError) {
+            throw options.executeError;
+          }
+          return options.queryResult;
+        },
+        delete(target) {
+          self.calls.push({ method: "delete", args: [target] });
+          if (options.executeError) {
+            throw options.executeError;
+          }
+          return options.queryResult;
+        },
+        upsert(target, data) {
+          self.calls.push({ method: "upsert", args: [target, data] });
+          if (options.executeError) {
+            throw options.executeError;
+          }
+          return options.queryResult;
+        }
+      };
+      try {
+        return await operationFn(fakeClient);
+      } catch (err) {
+        throw err;
       }
-      return options.queryResult;
     }
   };
 }

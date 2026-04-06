@@ -12,8 +12,7 @@ module.exports = function registerSurrealInsertNode(RED) {
         throw new Error("Missing table for insert");
       }
       const data = msg.payload;
-      const sql = `INSERT INTO ${table} CONTENT $data;`;
-      return manager.query(sql, { data });
+      return manager.execute((client) => client.insert(table, data));
     });
   }
 

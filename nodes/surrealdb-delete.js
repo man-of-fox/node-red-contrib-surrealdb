@@ -13,8 +13,7 @@ module.exports = function registerSurrealDeleteNode(RED) {
       }
       const recordId = resolveId(config, msg);
       const target = recordId ? `${table}:${recordId}` : table;
-      const sql = `DELETE ${target};`;
-      return manager.query(sql, {});
+      return manager.execute((client) => client.delete(target));
     });
   }
 
