@@ -5,23 +5,33 @@ services:
     ports:
       - "8000:8000"
 
+  node-red-init:
+    image: node:20-alpine
+    volumes:
+      - nodered_data:/data
+      - ./:/workspace/node-red-contrib-surrealdb:ro
+    command: >
+      /bin/sh -lc "
+      cd /data &&
+      npm init -y >/dev/null 2>&1 || true &&
+      npm pack --ignore-scripts --pack-destination /tmp /workspace/node-red-contrib-surrealdb &&
+      npm install --save --force --ignore-scripts /tmp/node-red-contrib-surrealdb-*.tgz
+      "
+    restart: "no"
+
   node-red:
     image: nodered/node-red:latest
     depends_on:
-      - surrealdb
+      surrealdb:
+        condition: service_started
+      node-red-init:
+        condition: service_completed_successfully
     ports:
       - "1880:1880"
     volumes:
       - nodered_data:/data
-      - ./:/workspace/node-red-contrib-surrealdb:ro
     environment:
       - TZ=Europe/Berlin
-    command: >
-      /bin/sh -lc "
-      cd /data &&
-      npm install --force /workspace/node-red-contrib-surrealdb &&
-      npm start -- --userDir /data
-      "
 
 volumes:
   nodered_data:
