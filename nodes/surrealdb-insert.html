@@ -5,7 +5,8 @@
     defaults: {
       name: { value: "" },
       connection: { value: "", type: "surrealdb-config", required: true },
-      table: { value: "", required: true }
+      table: { value: "", required: true },
+      mode: { value: "insert", required: true }
     },
     inputs: 1,
     outputs: 1,
@@ -29,8 +30,18 @@
     <label for="node-input-table">Table</label>
     <input type="text" id="node-input-table" />
   </div>
+  <div class="form-row">
+    <label for="node-input-mode">Mode</label>
+    <select id="node-input-mode">
+      <option value="insert">insert</option>
+      <option value="create">create</option>
+    </select>
+  </div>
 </script>
 
 <script type="text/html" data-help-name="surrealdb-insert">
-  <p>Insert <code>msg.payload</code> into a table.</p>
+  <p>
+    Write <code>msg.payload</code> into a table using mode <code>insert</code> or
+    <code>create</code>. Use <code>msg.mode</code> to override the node mode at runtime.
+  </p>
 </script>

@@ -11,8 +11,14 @@ module.exports = function registerSurrealInsertNode(RED) {
       if (!table) {
         throw new Error("Missing table for insert");
       }
+      const mode = String(msg.mode || config.mode || "insert").toLowerCase();
       const data = msg.payload;
-      return manager.execute((client) => client.insert(table, data));
+      return manager.execute((client) => {
+        if (mode === "create") {
+          return client.create(table, data);
+        }
+        return client.insert(table, data);
+      });
     });
   }
 

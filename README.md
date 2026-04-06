@@ -5,7 +5,7 @@ Node-RED palette for SurrealDB with robust connection handling, token refresh, r
 ## Goals
 
 - Provide simple nodes for common SurrealDB operations:
-  - `INSERT`
+  - `INSERT` (mode: `insert` or `create`)
   - `RELATE`
   - `UPSERT`
   - `MODIFY` (`update`, `merge`, `patch`)

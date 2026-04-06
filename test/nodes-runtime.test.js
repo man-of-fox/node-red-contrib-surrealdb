@@ -53,6 +53,72 @@ test("runtime insert node: sends query result to output", async () => {
   assert.deepEqual(msg.payload, [{ id: "users:1", name: "Ada" }]);
 });
 
+test("runtime insert node: uses create mode from node config", async () => {
+  const manager = createFakeManager({
+    queryResult: [{ id: "users:2", name: "Grace" }]
+  });
+  const insertNode = requireNodeWithSharedStub("../nodes/surrealdb-insert.js", manager);
+
+  await loadFlow(
+    [insertNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-insert",
+        connection: "cfg",
+        table: "users",
+        mode: "create",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const out = helper.getNode("n2");
+  const inNode = helper.getNode("n1");
+
+  const received = onceInput(out);
+  inNode.receive({ payload: { name: "Grace" } });
+  await received;
+
+  assert.equal(manager.calls.length, 1);
+  assert.equal(manager.calls[0].method, "create");
+  assert.deepEqual(manager.calls[0].args, ["users", { name: "Grace" }]);
+});
+
+test("runtime insert node: supports msg.mode override to create", async () => {
+  const manager = createFakeManager({
+    queryResult: [{ id: "users:3", name: "Linus" }]
+  });
+  const insertNode = requireNodeWithSharedStub("../nodes/surrealdb-insert.js", manager);
+
+  await loadFlow(
+    [insertNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-insert",
+        connection: "cfg",
+        table: "users",
+        mode: "insert",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const out = helper.getNode("n2");
+  const inNode = helper.getNode("n1");
+
+  const received = onceInput(out);
+  inNode.receive({ mode: "create", payload: { name: "Linus" } });
+  await received;
+
+  assert.equal(manager.calls.length, 1);
+  assert.equal(manager.calls[0].method, "create");
+  assert.deepEqual(manager.calls[0].args, ["users", { name: "Linus" }]);
+});
+
 test("runtime relate node: creates edge using configured refs", async () => {
   const manager = createFakeManager({
     queryResult: [{ id: "likes:1", in: "users:alice", out: "movies:matrix" }]
@@ -580,6 +646,13 @@ function createFakeManager(options = {}) {
       const fakeClient = {
         insert(table, data) {
           self.calls.push({ method: "insert", args: [table, data] });
+          if (options.executeError) {
+            throw options.executeError;
+          }
+          return options.queryResult;
+        },
+        create(table, data) {
+          self.calls.push({ method: "create", args: [table, data] });
           if (options.executeError) {
             throw options.executeError;
           }
