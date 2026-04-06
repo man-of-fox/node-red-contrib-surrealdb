@@ -1,0 +1,203 @@
+[
+  {
+    "id": "f6f2187d.f17ca8",
+    "type": "tab",
+    "label": "Flow 1",
+    "disabled": false,
+    "info": ""
+  },
+  {
+    "id": "e4b0d8efcfa4b2bf",
+    "type": "surrealdb-insert",
+    "z": "f6f2187d.f17ca8",
+    "name": "",
+    "connection": "557cf4c6fbe071b5",
+    "table": "testtable",
+    "x": 300,
+    "y": 160,
+    "wires": [["49eebaf795276712", "3a3faa9363ea7b24"]]
+  },
+  {
+    "id": "17a11f7c9a56166c",
+    "type": "inject",
+    "z": "f6f2187d.f17ca8",
+    "name": "",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "{\t    \"name\": \"Test\",\t    \"mail\": \"test@example.com\",\t    \"active\": true,\t    \"created\": $now()\t}",
+    "payloadType": "jsonata",
+    "x": 130,
+    "y": 160,
+    "wires": [["e4b0d8efcfa4b2bf"]]
+  },
+  {
+    "id": "49eebaf795276712",
+    "type": "debug",
+    "z": "f6f2187d.f17ca8",
+    "name": "debug 1",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 480,
+    "y": 160,
+    "wires": []
+  },
+  {
+    "id": "0bde5c993470edbc",
+    "type": "surrealdb-select",
+    "z": "f6f2187d.f17ca8",
+    "name": "",
+    "connection": "557cf4c6fbe071b5",
+    "table": "testtable",
+    "recordId": "",
+    "x": 360,
+    "y": 220,
+    "wires": [["be348aef572e7bde"]]
+  },
+  {
+    "id": "3a3faa9363ea7b24",
+    "type": "delay",
+    "z": "f6f2187d.f17ca8",
+    "name": "",
+    "pauseType": "delay",
+    "timeout": "1",
+    "timeoutUnits": "seconds",
+    "rate": "1",
+    "nbRateUnits": "1",
+    "rateUnits": "second",
+    "randomFirst": "1",
+    "randomLast": "5",
+    "randomUnits": "seconds",
+    "drop": false,
+    "allowrate": false,
+    "outputs": 1,
+    "x": 160,
+    "y": 220,
+    "wires": [["0bde5c993470edbc"]]
+  },
+  {
+    "id": "be348aef572e7bde",
+    "type": "debug",
+    "z": "f6f2187d.f17ca8",
+    "name": "debug 2",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 540,
+    "y": 220,
+    "wires": []
+  },
+  {
+    "id": "72a770ae2d4406fe",
+    "type": "surrealdb-live",
+    "z": "f6f2187d.f17ca8",
+    "name": "",
+    "connection": "557cf4c6fbe071b5",
+    "table": "testtable",
+    "x": 290,
+    "y": 100,
+    "wires": [["845572d2e6054eda"]]
+  },
+  {
+    "id": "845572d2e6054eda",
+    "type": "debug",
+    "z": "f6f2187d.f17ca8",
+    "name": "debug 3",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 460,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "e3f1d74eb60225a0",
+    "type": "inject",
+    "z": "f6f2187d.f17ca8",
+    "name": "start",
+    "props": [
+      {
+        "p": "command",
+        "v": "start",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "x": 130,
+    "y": 60,
+    "wires": [["72a770ae2d4406fe"]]
+  },
+  {
+    "id": "2bfd54d065df34e3",
+    "type": "inject",
+    "z": "f6f2187d.f17ca8",
+    "name": "stop",
+    "props": [
+      {
+        "p": "command",
+        "v": "stop",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "x": 130,
+    "y": 100,
+    "wires": [["72a770ae2d4406fe"]]
+  },
+  {
+    "id": "557cf4c6fbe071b5",
+    "type": "surrealdb-config",
+    "name": "",
+    "url": "ws://surrealdb:8000",
+    "namespace": "test",
+    "database": "test",
+    "authType": "credentials",
+    "username": "",
+    "minConnections": "2",
+    "maxConnections": 5,
+    "healthCheckIntervalMs": 30000,
+    "retryAttempts": 5,
+    "retryDelayMs": 1000,
+    "validateConnection": true,
+    "tokenRefreshSkewSec": 60
+  },
+  {
+    "id": "b32cacdfe251acd7",
+    "type": "global-config",
+    "env": [],
+    "modules": {
+      "node-red-contrib-surrealdb": "0.1.0"
+    }
+  }
+]
