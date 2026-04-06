@@ -118,6 +118,100 @@ test("runtime delete node: deletes whole table when no record id provided", asyn
   assert.deepEqual(manager.calls[0].args, ["users"]);
 });
 
+test("runtime modify node: merge mode by default", async () => {
+  const manager = createFakeManager({
+    queryResult: [{ id: "users:1", name: "Ada", active: true }]
+  });
+  const modifyNode = requireNodeWithSharedStub("../nodes/surrealdb-modify.js", manager);
+
+  await loadFlow(
+    [modifyNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-modify",
+        connection: "cfg",
+        table: "users",
+        recordId: "1",
+        mode: "merge",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const out = helper.getNode("n2");
+  const inNode = helper.getNode("n1");
+  const received = onceInput(out);
+  inNode.receive({ payload: { active: true } });
+  await received;
+
+  assert.equal(manager.calls.length, 1);
+  assert.equal(manager.calls[0].method, "merge");
+  assert.deepEqual(manager.calls[0].args, ["users:1", { active: true }]);
+});
+
+test("runtime modify node: update mode via msg override", async () => {
+  const manager = createFakeManager({
+    queryResult: [{ id: "users:1", name: "Grace" }]
+  });
+  const modifyNode = requireNodeWithSharedStub("../nodes/surrealdb-modify.js", manager);
+
+  await loadFlow(
+    [modifyNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-modify",
+        connection: "cfg",
+        table: "users",
+        recordId: "1",
+        mode: "merge",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const out = helper.getNode("n2");
+  const inNode = helper.getNode("n1");
+  const received = onceInput(out);
+  inNode.receive({ mode: "update", payload: { name: "Grace" } });
+  await received;
+
+  assert.equal(manager.calls.length, 1);
+  assert.equal(manager.calls[0].method, "update");
+  assert.deepEqual(manager.calls[0].args, ["users:1", { name: "Grace" }]);
+});
+
+test("runtime modify node: patch mode requires recordId", async () => {
+  const manager = createFakeManager();
+  const modifyNode = requireNodeWithSharedStub("../nodes/surrealdb-modify.js", manager);
+
+  await loadFlow(
+    [modifyNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-modify",
+        connection: "cfg",
+        table: "users",
+        mode: "patch",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const inNode = helper.getNode("n1");
+  const errCall = onceCallEvent(inNode, "call:error");
+  inNode.receive({ payload: [{ op: "replace", path: "/name", value: "New" }] });
+  const call = await errCall;
+
+  assert.ok(call, "expected call:error event");
+  assert.equal(manager.calls.length, 0);
+});
+
 test("runtime insert node: emits error when table is missing", async () => {
   const manager = createFakeManager();
   const insertNode = requireNodeWithSharedStub("../nodes/surrealdb-insert.js", manager);
@@ -320,6 +414,27 @@ function createFakeManager(options = {}) {
         },
         upsert(target, data) {
           self.calls.push({ method: "upsert", args: [target, data] });
+          if (options.executeError) {
+            throw options.executeError;
+          }
+          return options.queryResult;
+        },
+        update(target, data) {
+          self.calls.push({ method: "update", args: [target, data] });
+          if (options.executeError) {
+            throw options.executeError;
+          }
+          return options.queryResult;
+        },
+        merge(target, data) {
+          self.calls.push({ method: "merge", args: [target, data] });
+          if (options.executeError) {
+            throw options.executeError;
+          }
+          return options.queryResult;
+        },
+        patch(target, data) {
+          self.calls.push({ method: "patch", args: [target, data] });
           if (options.executeError) {
             throw options.executeError;
           }

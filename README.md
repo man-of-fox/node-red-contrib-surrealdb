@@ -6,10 +6,11 @@ Node-RED palette for SurrealDB with robust connection handling, token refresh, r
 
 - Provide simple nodes for common SurrealDB operations:
   - `INSERT`
-  - `UPSERT`
-  - `DELETE`
-  - `SELECT`
-  - `LIVE`
+- `UPSERT`
+- `MODIFY` (`update`, `merge`, `patch`)
+- `DELETE`
+- `SELECT`
+- `LIVE`
 - Centralize all connection concerns in one config node:
   - connection lifecycle
   - health checks
@@ -44,6 +45,8 @@ Node-RED palette for SurrealDB with robust connection handling, token refresh, r
 │   ├── surrealdb-insert.js
 │   ├── surrealdb-live.html
 │   ├── surrealdb-live.js
+│   ├── surrealdb-modify.html
+│   ├── surrealdb-modify.js
 │   ├── surrealdb-select.html
 │   ├── surrealdb-select.js
 │   ├── surrealdb-upsert.html
