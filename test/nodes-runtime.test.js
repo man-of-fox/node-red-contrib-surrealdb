@@ -119,6 +119,100 @@ test("runtime insert node: supports msg.mode override to create", async () => {
   assert.deepEqual(manager.calls[0].args, ["users", { name: "Linus" }]);
 });
 
+test("runtime query node: executes configured query and vars", async () => {
+  const manager = createFakeManager({
+    queryResult: [{ result: [{ id: "person:tobie" }] }]
+  });
+  const queryNode = requireNodeWithSharedStub("../nodes/surrealdb-query.js", manager);
+
+  await loadFlow(
+    [queryNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-query",
+        connection: "cfg",
+        query: "SELECT * FROM person WHERE active = $active;",
+        vars: '{"active":true}',
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const out = helper.getNode("n2");
+  const inNode = helper.getNode("n1");
+  const received = onceInput(out);
+  await inNode.receive({});
+  await received;
+
+  assert.equal(manager.queryCalls.length, 1);
+  assert.equal(manager.queryCalls[0].sql, "SELECT * FROM person WHERE active = $active;");
+  assert.deepEqual(manager.queryCalls[0].vars, { active: true });
+});
+
+test("runtime query node: supports msg.query and msg.vars override", async () => {
+  const manager = createFakeManager({
+    queryResult: [{ result: [{ id: "person:ada" }] }]
+  });
+  const queryNode = requireNodeWithSharedStub("../nodes/surrealdb-query.js", manager);
+
+  await loadFlow(
+    [queryNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-query",
+        connection: "cfg",
+        query: "RETURN 0;",
+        vars: "{}",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const out = helper.getNode("n2");
+  const inNode = helper.getNode("n1");
+  const received = onceInput(out);
+  await inNode.receive({
+    query: "SELECT * FROM person WHERE name = $name;",
+    vars: { name: "Ada" }
+  });
+  await received;
+
+  assert.equal(manager.queryCalls.length, 1);
+  assert.equal(manager.queryCalls[0].sql, "SELECT * FROM person WHERE name = $name;");
+  assert.deepEqual(manager.queryCalls[0].vars, { name: "Ada" });
+});
+
+test("runtime query node: emits error for invalid vars JSON", async () => {
+  const manager = createFakeManager();
+  const queryNode = requireNodeWithSharedStub("../nodes/surrealdb-query.js", manager);
+
+  await loadFlow(
+    [queryNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-query",
+        connection: "cfg",
+        query: "RETURN 1;",
+        vars: "{invalid",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const inNode = helper.getNode("n1");
+  const errCall = onceCallEvent(inNode, "call:error");
+  await inNode.receive({});
+  await errCall;
+
+  assert.equal(manager.queryCalls.length, 0);
+});
+
 test("runtime relate node: creates edge using configured refs", async () => {
   const manager = createFakeManager({
     queryResult: [{ id: "likes:1", in: "users:alice", out: "movies:matrix" }]
@@ -641,6 +735,14 @@ function createFakeManager(options = {}) {
   return {
     calls: [],
     liveCalls: [],
+    queryCalls: [],
+    async query(sql, vars) {
+      this.queryCalls.push({ sql, vars });
+      if (options.executeError) {
+        throw options.executeError;
+      }
+      return options.queryResult;
+    },
     async execute(operationFn) {
       const self = this;
       const fakeClient = {

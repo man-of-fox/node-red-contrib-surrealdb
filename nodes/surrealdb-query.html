@@ -1,0 +1,70 @@
+<script type="text/javascript">
+  RED.nodes.registerType("surrealdb-query", {
+    category: "SurrealDB",
+    color: "#d8f3dc",
+    defaults: {
+      name: { value: "" },
+      connection: { value: "", type: "surrealdb-config", required: true },
+      query: { value: "", required: true },
+      vars: { value: "" }
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "db.svg",
+    label: function () {
+      if (this.name) {
+        return this.name;
+      }
+      const q = (this.query || "").trim().replace(/\s+/g, " ");
+      if (!q) {
+        return "surrealdb query";
+      }
+      const short = q.length > 38 ? `${q.slice(0, 38)}...` : q;
+      return `surrealdb query (${short})`;
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="surrealdb-query">
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-connection">Connection</label>
+    <input type="text" id="node-input-connection" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-query">Query</label>
+    <input type="text" id="node-input-query" placeholder="SELECT * FROM person WHERE active = $active;" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-vars">Vars (JSON)</label>
+    <input type="text" id="node-input-vars" placeholder='{"active":true}' />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="surrealdb-query">
+  <p>Führt eine freie SurrealQL-Abfrage aus.</p>
+  <h3>Inputs</h3>
+  <ul>
+    <li><code>msg.query</code> oder <code>msg.sql</code> (optional): überschreibt Query aus der Node</li>
+    <li><code>msg.vars</code> oder <code>msg.parameters</code> (optional): Variablenobjekt für <code>$params</code></li>
+    <li><code>msg.payload</code> wird nicht automatisch als Query verwendet</li>
+  </ul>
+  <h3>Node-Felder</h3>
+  <ul>
+    <li><code>query</code>: SurrealQL-Statement</li>
+    <li><code>vars</code>: JSON-Objekt als Standard-Variablen</li>
+  </ul>
+  <h3>Beispiel</h3>
+  <pre>{
+  "query": "SELECT * FROM person WHERE active = $active;",
+  "vars": { "active": true }
+}</pre>
+  <h3>Original-Doku</h3>
+  <p>
+    <a href="https://surrealdb.com/docs/sdk/javascript/methods/query" target="_blank">JS SDK: query()</a><br />
+    <a href="https://surrealdb.com/docs/surrealql" target="_blank">SurrealQL: Overview</a>
+  </p>
+</script>

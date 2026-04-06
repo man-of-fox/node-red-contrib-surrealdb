@@ -46,6 +46,7 @@
     "nodes": {
       "surrealdb-config": "nodes/surrealdb-config.js",
       "surrealdb-insert": "nodes/surrealdb-insert.js",
+      "surrealdb-query": "nodes/surrealdb-query.js",
       "surrealdb-relate": "nodes/surrealdb-relate.js",
       "surrealdb-upsert": "nodes/surrealdb-upsert.js",
       "surrealdb-modify": "nodes/surrealdb-modify.js",

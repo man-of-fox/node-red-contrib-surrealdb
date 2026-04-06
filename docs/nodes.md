@@ -261,6 +261,34 @@ Creates graph relations (`from -> relation -> to`).
 - SurrealQL `RELATE`: https://surrealdb.com/docs/surrealql/statements/relate
 - JS SDK API overview (includes relation query builders): https://surrealdb.com/docs/sdk/javascript
 
+## `surrealdb-query`
+
+Executes free-form SurrealQL.
+
+### Node properties
+
+- `query` (required): SurrealQL statement
+- `vars` (optional): JSON object string for query variables
+
+### Runtime overrides
+
+- `msg.query` or `msg.sql`
+- `msg.vars` or `msg.parameters`
+
+### Example
+
+```json
+{
+  "query": "SELECT * FROM person WHERE active = $active;",
+  "vars": { "active": true }
+}
+```
+
+### Official docs
+
+- JS SDK `.query()`: https://surrealdb.com/docs/sdk/javascript/methods/query
+- SurrealQL overview: https://surrealdb.com/docs/surrealql
+
 ## `surrealdb-live`
 
 Starts/stops a live subscription for a table.

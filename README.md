@@ -6,6 +6,7 @@ Node-RED palette for SurrealDB with robust connection handling, token refresh, r
 
 - Provide simple nodes for common SurrealDB operations:
   - `INSERT` (mode: `insert` or `create`)
+  - `QUERY`
   - `RELATE`
   - `UPSERT`
   - `MODIFY` (`update`, `merge`, `patch`)
@@ -46,6 +47,8 @@ Node-RED palette for SurrealDB with robust connection handling, token refresh, r
 │   ├── surrealdb-insert.js
 │   ├── surrealdb-live.html
 │   ├── surrealdb-live.js
+│   ├── surrealdb-query.html
+│   ├── surrealdb-query.js
 │   ├── surrealdb-relate.html
 │   ├── surrealdb-relate.js
 │   ├── surrealdb-modify.html
