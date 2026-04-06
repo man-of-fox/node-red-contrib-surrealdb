@@ -174,6 +174,75 @@ test("runtime select node: emits error when config node is missing", async () =>
   assert.equal(manager.calls.length, 0);
 });
 
+test("runtime live node: start registers subscription and emits ack", async () => {
+  const manager = createFakeManager({
+    liveHandle: { key: "live-1", subscriptionId: "sub-1" }
+  });
+  const liveNode = requireNodeWithSharedStub("../nodes/surrealdb-live.js", manager);
+
+  await loadFlow(
+    [liveNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-live",
+        connection: "cfg",
+        table: "users",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const out = helper.getNode("n2");
+  const inNode = helper.getNode("n1");
+
+  const received = onceInput(out);
+  inNode.receive({});
+  const msg = await received;
+
+  assert.equal(manager.liveCalls.length, 1);
+  assert.deepEqual(manager.liveCalls[0], { action: "register", table: "users" });
+  assert.equal(msg.payload.live, true);
+  assert.equal(msg.payload.subscriptionId, "sub-1");
+});
+
+test("runtime live node: stop unsubscribes active subscription", async () => {
+  const manager = createFakeManager({
+    liveHandle: { key: "live-1", subscriptionId: "sub-1" }
+  });
+  const liveNode = requireNodeWithSharedStub("../nodes/surrealdb-live.js", manager);
+
+  await loadFlow(
+    [liveNode],
+    [
+      {
+        id: "n1",
+        type: "surrealdb-live",
+        connection: "cfg",
+        table: "users",
+        wires: [["n2"]]
+      },
+      { id: "n2", type: "helper" }
+    ]
+  );
+
+  const out = helper.getNode("n2");
+  const inNode = helper.getNode("n1");
+
+  const first = onceInput(out);
+  inNode.receive({ command: "start" });
+  await first;
+
+  const second = onceInput(out);
+  inNode.receive({ command: "stop" });
+  const stopMsg = await second;
+
+  assert.equal(manager.liveCalls.length, 2);
+  assert.deepEqual(manager.liveCalls[1], { action: "unsubscribe", key: "live-1" });
+  assert.equal(stopMsg.payload.stopped, true);
+});
+
 function requireNodeWithSharedStub(nodeModulePath, manager) {
   const nodePath = require.resolve(nodeModulePath);
   delete require.cache[nodePath];
@@ -224,6 +293,7 @@ function createSharedStub(manager) {
 function createFakeManager(options = {}) {
   return {
     calls: [],
+    liveCalls: [],
     async execute(operationFn) {
       const self = this;
       const fakeClient = {
@@ -261,6 +331,14 @@ function createFakeManager(options = {}) {
       } catch (err) {
         throw err;
       }
+    },
+    async registerLive(optionsIn) {
+      this.liveCalls.push({ action: "register", table: optionsIn.table });
+      return options.liveHandle || { key: "live-default", subscriptionId: "sub-default" };
+    },
+    async unsubscribeLive(key) {
+      this.liveCalls.push({ action: "unsubscribe", key });
+      return true;
     }
   };
 }
