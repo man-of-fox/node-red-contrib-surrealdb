@@ -1,0 +1,27 @@
+services:
+  surrealdb:
+    image: surrealdb/surrealdb:v2.6.1
+    command: start --log info --unauthenticated memory
+    ports:
+      - "8000:8000"
+
+  node-red:
+    image: nodered/node-red:latest
+    depends_on:
+      - surrealdb
+    ports:
+      - "1880:1880"
+    volumes:
+      - nodered_data:/data
+      - ./:/workspace/node-red-contrib-surrealdb:ro
+    environment:
+      - TZ=Europe/Berlin
+    command: >
+      /bin/sh -lc "
+      cd /data &&
+      npm install /workspace/node-red-contrib-surrealdb &&
+      npm start -- --userDir /data
+      "
+
+volumes:
+  nodered_data:

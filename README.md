@@ -190,6 +190,26 @@ GitHub Actions runs on push and pull requests and executes:
 
 The workflow uses current Actions major versions and opts into the Node.js 24 JavaScript action runtime.
 
+## UI Test With Docker Compose
+
+Start a local UI test stack (Node-RED + SurrealDB):
+
+```bash
+docker compose -f docker-compose.ui-test.yml up -d
+```
+
+Open Node-RED UI:
+
+```text
+http://localhost:1880
+```
+
+Stop and remove the stack:
+
+```bash
+docker compose -f docker-compose.ui-test.yml down
+```
+
 ## Current Scaffold Status
 
 - Base package metadata
