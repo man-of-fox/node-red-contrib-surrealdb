@@ -1,8 +1,11 @@
 {
-  "name": "node-red-contrib-surrealdb",
+  "name": "@man-of-fox/node-red-contrib-surrealdb",
   "version": "0.1.0",
   "description": "Node-RED palette for SurrealDB with resilient connection handling",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "index.js",
   "keywords": [
     "node-red",

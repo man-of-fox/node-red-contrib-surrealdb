@@ -1,4 +1,4 @@
-# Architecture Proposal: `node-red-contrib-surrealdb`
+# Architecture Proposal: `@man-of-fox/node-red-contrib-surrealdb`
 
 ## 1. Objectives
 
@@ -123,4 +123,3 @@ On reconnect, subscriptions should be re-established.
 2. Add pool tuning and health checks
 3. Add robust `live` re-subscribe
 4. Add tests (token expiry, reconnect, pool pressure, live resume)
-

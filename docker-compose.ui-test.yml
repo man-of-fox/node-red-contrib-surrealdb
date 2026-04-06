@@ -16,7 +16,7 @@ services:
       cd /data &&
       npm init -y >/dev/null 2>&1 || true &&
       npm pack --ignore-scripts --pack-destination /tmp /workspace/node-red-contrib-surrealdb &&
-      npm install --save --force --ignore-scripts /tmp/node-red-contrib-surrealdb-*.tgz &&
+      npm install --save --force --ignore-scripts /tmp/*node-red-contrib-surrealdb-*.tgz &&
       node /workspace/node-red-contrib-surrealdb/scripts/import-test-flows.js /workspace/test-flows /data/flows.json
       "
     restart: "no"

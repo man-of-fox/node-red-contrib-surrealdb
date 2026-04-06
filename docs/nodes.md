@@ -1,6 +1,6 @@
 # Node Reference
 
-This document describes all current nodes in `node-red-contrib-surrealdb`, including example inputs and links to the official SurrealDB documentation.
+This document describes all current nodes in `@man-of-fox/node-red-contrib-surrealdb`, including example inputs and links to the official SurrealDB documentation.
 
 ## General Notes
 

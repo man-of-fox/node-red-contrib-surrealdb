@@ -263,7 +263,7 @@
     "type": "global-config",
     "env": [],
     "modules": {
-      "node-red-contrib-surrealdb": "0.1.0"
+      "@man-of-fox/node-red-contrib-surrealdb": "0.1.0"
     }
   }
 ]

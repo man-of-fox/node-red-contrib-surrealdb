@@ -1,4 +1,4 @@
-# node-red-contrib-surrealdb
+# @man-of-fox/node-red-contrib-surrealdb
 
 Node-RED palette for SurrealDB with robust connection handling, token refresh, retry logic, and optional connection validation.
 
@@ -78,6 +78,12 @@ npm install
 
 ```bash
 npm install /path/to/node-red-contrib-surrealdb
+```
+
+Or install from npm (after publish):
+
+```bash
+npm install @man-of-fox/node-red-contrib-surrealdb
 ```
 
 3. Restart Node-RED.
@@ -204,6 +210,22 @@ GitHub Actions runs on push and pull requests and executes:
 - `npm run test:integration:resilience` (token refresh + dead connection recovery scenarios)
 
 The workflow uses current Actions major versions and opts into the Node.js 24 JavaScript action runtime.
+
+## Release and Publish
+
+Publishing is automated via GitHub Actions on tags matching `v*.*.*`.
+The release workflow takes the version from the tag and applies it to `package.json`/`package-lock.json` in CI before running `npm publish`.
+
+Example:
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+Required secret in GitHub repository settings:
+
+- `NPM_TOKEN`
 
 ## UI Test With Docker Compose
 
