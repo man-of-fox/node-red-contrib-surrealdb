@@ -1,27 +1,27 @@
 [
   {
-    "id": "f6f2187d.f17ca8",
+    "id": "2e6b3dd164bee1b9",
     "type": "tab",
     "label": "Simple Test Flow",
     "disabled": false,
     "info": ""
   },
   {
-    "id": "e4b0d8efcfa4b2bf",
+    "id": "6f0ae90023d11cdf",
     "type": "surrealdb-insert",
-    "z": "f6f2187d.f17ca8",
+    "z": "2e6b3dd164bee1b9",
     "name": "",
-    "connection": "557cf4c6fbe071b5",
+    "connection": "0dc9098ab8f5de43",
     "table": "testtable",
-    "x": 300,
-    "y": 160,
-    "wires": [["49eebaf795276712", "3a3faa9363ea7b24"]]
+    "x": 340,
+    "y": 220,
+    "wires": [["04b94dc8c1fa814d", "19de86b072cdb2fd"]]
   },
   {
-    "id": "17a11f7c9a56166c",
+    "id": "eb09a58e231f6d42",
     "type": "inject",
-    "z": "f6f2187d.f17ca8",
-    "name": "",
+    "z": "2e6b3dd164bee1b9",
+    "name": "Hauptperson",
     "props": [
       {
         "p": "payload"
@@ -32,17 +32,17 @@
     "once": false,
     "onceDelay": 0.1,
     "topic": "",
-    "payload": "{\t    \"name\": \"Test\",\t    \"mail\": \"test@example.com\",\t    \"active\": true,\t    \"created\": $now()\t}",
+    "payload": "{\t    \"id\": \"test\",\t    \"name\": \"Test\",\t    \"mail\": \"test@example.com\",\t    \"active\": true,\t    \"created\": $now()\t}",
     "payloadType": "jsonata",
-    "x": 130,
+    "x": 150,
     "y": 160,
-    "wires": [["e4b0d8efcfa4b2bf"]]
+    "wires": [["6f0ae90023d11cdf"]]
   },
   {
-    "id": "49eebaf795276712",
+    "id": "04b94dc8c1fa814d",
     "type": "debug",
-    "z": "f6f2187d.f17ca8",
-    "name": "debug 1",
+    "z": "2e6b3dd164bee1b9",
+    "name": "insert",
     "active": true,
     "tosidebar": true,
     "console": false,
@@ -51,26 +51,26 @@
     "targetType": "full",
     "statusVal": "",
     "statusType": "auto",
-    "x": 480,
-    "y": 160,
+    "x": 510,
+    "y": 220,
     "wires": []
   },
   {
-    "id": "0bde5c993470edbc",
+    "id": "2e506a684ebc8fff",
     "type": "surrealdb-select",
-    "z": "f6f2187d.f17ca8",
+    "z": "2e6b3dd164bee1b9",
     "name": "",
-    "connection": "557cf4c6fbe071b5",
+    "connection": "0dc9098ab8f5de43",
     "table": "testtable",
     "recordId": "",
     "x": 360,
-    "y": 220,
-    "wires": [["be348aef572e7bde"]]
+    "y": 280,
+    "wires": [["3c3f8519e5cbb584"]]
   },
   {
-    "id": "3a3faa9363ea7b24",
+    "id": "19de86b072cdb2fd",
     "type": "delay",
-    "z": "f6f2187d.f17ca8",
+    "z": "2e6b3dd164bee1b9",
     "name": "",
     "pauseType": "delay",
     "timeout": "1",
@@ -85,14 +85,14 @@
     "allowrate": false,
     "outputs": 1,
     "x": 160,
-    "y": 220,
-    "wires": [["0bde5c993470edbc"]]
+    "y": 280,
+    "wires": [["2e506a684ebc8fff"]]
   },
   {
-    "id": "be348aef572e7bde",
+    "id": "3c3f8519e5cbb584",
     "type": "debug",
-    "z": "f6f2187d.f17ca8",
-    "name": "debug 2",
+    "z": "2e6b3dd164bee1b9",
+    "name": "select all",
     "active": true,
     "tosidebar": true,
     "console": false,
@@ -102,25 +102,25 @@
     "statusVal": "",
     "statusType": "auto",
     "x": 540,
-    "y": 220,
+    "y": 280,
     "wires": []
   },
   {
-    "id": "72a770ae2d4406fe",
+    "id": "449d94670f3976e5",
     "type": "surrealdb-live",
-    "z": "f6f2187d.f17ca8",
+    "z": "2e6b3dd164bee1b9",
     "name": "",
-    "connection": "557cf4c6fbe071b5",
+    "connection": "0dc9098ab8f5de43",
     "table": "testtable",
     "x": 290,
     "y": 100,
-    "wires": [["845572d2e6054eda"]]
+    "wires": [["8f0132593e319ec6"]]
   },
   {
-    "id": "845572d2e6054eda",
+    "id": "8f0132593e319ec6",
     "type": "debug",
-    "z": "f6f2187d.f17ca8",
-    "name": "debug 3",
+    "z": "2e6b3dd164bee1b9",
+    "name": "live-query",
     "active": true,
     "tosidebar": true,
     "console": false,
@@ -134,9 +134,9 @@
     "wires": []
   },
   {
-    "id": "e3f1d74eb60225a0",
+    "id": "360fd54bbc2f97f2",
     "type": "inject",
-    "z": "f6f2187d.f17ca8",
+    "z": "2e6b3dd164bee1b9",
     "name": "start",
     "props": [
       {
@@ -152,12 +152,12 @@
     "topic": "",
     "x": 130,
     "y": 60,
-    "wires": [["72a770ae2d4406fe"]]
+    "wires": [["449d94670f3976e5"]]
   },
   {
-    "id": "2bfd54d065df34e3",
+    "id": "2d4f3af70d690fc9",
     "type": "inject",
-    "z": "f6f2187d.f17ca8",
+    "z": "2e6b3dd164bee1b9",
     "name": "stop",
     "props": [
       {
@@ -173,10 +173,141 @@
     "topic": "",
     "x": 130,
     "y": 100,
-    "wires": [["72a770ae2d4406fe"]]
+    "wires": [["449d94670f3976e5"]]
   },
   {
-    "id": "557cf4c6fbe071b5",
+    "id": "eae02ff335b3782a",
+    "type": "surrealdb-modify",
+    "z": "2e6b3dd164bee1b9",
+    "name": "",
+    "connection": "0dc9098ab8f5de43",
+    "table": "testtable",
+    "recordId": "test",
+    "mode": "patch",
+    "x": 390,
+    "y": 340,
+    "wires": [["a6491be72164dd05"]]
+  },
+  {
+    "id": "ddf765e2018226bd",
+    "type": "inject",
+    "z": "2e6b3dd164bee1b9",
+    "name": "Zufallsperson",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "(\t    $num:=$round($random()*100, 0);\t{\t    \"name\": \"Test \"&$num,\t    \"mail\": \"test-\"&$num&\"@example.com\",\t    \"active\": true,\t    \"created\": $now()\t}\t)",
+    "payloadType": "jsonata",
+    "x": 150,
+    "y": 220,
+    "wires": [["6f0ae90023d11cdf"]]
+  },
+  {
+    "id": "bb0c2bb51d2b22e7",
+    "type": "inject",
+    "z": "2e6b3dd164bee1b9",
+    "name": "Hauptperson patch",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "[\t    { op: 'replace', path: '/mail', value: 'patched@example.com' },\t    { op: 'add', path: '/updated', value: $now() }\t]",
+    "payloadType": "jsonata",
+    "x": 170,
+    "y": 340,
+    "wires": [["eae02ff335b3782a"]]
+  },
+  {
+    "id": "a6491be72164dd05",
+    "type": "debug",
+    "z": "2e6b3dd164bee1b9",
+    "name": "patch Hauptperson",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 610,
+    "y": 340,
+    "wires": []
+  },
+  {
+    "id": "b058603e5054375d",
+    "type": "inject",
+    "z": "2e6b3dd164bee1b9",
+    "name": "",
+    "props": [],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "x": 190,
+    "y": 300,
+    "wires": [["2e506a684ebc8fff"]]
+  },
+  {
+    "id": "2595563a77ef7307",
+    "type": "surrealdb-select",
+    "z": "2e6b3dd164bee1b9",
+    "name": "",
+    "connection": "0dc9098ab8f5de43",
+    "table": "testtable",
+    "recordId": "test",
+    "x": 500,
+    "y": 160,
+    "wires": [["6c9a2e1d0a02de7e"]]
+  },
+  {
+    "id": "6c9a2e1d0a02de7e",
+    "type": "debug",
+    "z": "2e6b3dd164bee1b9",
+    "name": "select Hauptperson",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 710,
+    "y": 160,
+    "wires": []
+  },
+  {
+    "id": "83f02ccf7d02a87e",
+    "type": "inject",
+    "z": "2e6b3dd164bee1b9",
+    "name": "",
+    "props": [],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "x": 330,
+    "y": 160,
+    "wires": [["2595563a77ef7307"]]
+  },
+  {
+    "id": "0dc9098ab8f5de43",
     "type": "surrealdb-config",
     "name": "",
     "url": "ws://surrealdb:8000",
@@ -193,7 +324,7 @@
     "tokenRefreshSkewSec": 60
   },
   {
-    "id": "b32cacdfe251acd7",
+    "id": "ef3b46be1fc74bc2",
     "type": "global-config",
     "env": [],
     "modules": {
