@@ -1,6 +1,6 @@
 {
   "name": "@man-of-fox/node-red-contrib-surrealdb",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Node-RED palette for SurrealDB (tested with SurrealDB v2.6.x, surrealdb JS SDK v1.x) with resilient connection handling",
   "license": "MIT",
   "publishConfig": {
