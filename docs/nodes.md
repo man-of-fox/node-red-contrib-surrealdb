@@ -23,7 +23,10 @@ Shared connection and resilience settings.
 - Pool and resilience:
   - `minConnections`, `maxConnections`
   - `healthCheckIntervalMs`
+  - `healthCheckTimeoutMs`
   - `retryAttempts`, `retryDelayMs`
+  - `acquireTimeoutMs`
+  - `operationTimeoutMs`
   - `validateConnection`
   - `tokenRefreshSkewSec`
 

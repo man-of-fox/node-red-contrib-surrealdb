@@ -17,8 +17,11 @@ module.exports = function registerSurrealConfigNode(RED) {
     this.minConnections = Number(config.minConnections || 1);
     this.maxConnections = Number(config.maxConnections || 5);
     this.healthCheckIntervalMs = Number(config.healthCheckIntervalMs || 30000);
+    this.healthCheckTimeoutMs = Number(config.healthCheckTimeoutMs || 2000);
     this.retryAttempts = Number(config.retryAttempts || 5);
     this.retryDelayMs = Number(config.retryDelayMs || 1000);
+    this.acquireTimeoutMs = Number(config.acquireTimeoutMs || 30000);
+    this.operationTimeoutMs = Number(config.operationTimeoutMs || 30000);
     this.validateConnection = !(
       config.validateConnection === false ||
       config.validateConnection === "false" ||
@@ -38,8 +41,11 @@ module.exports = function registerSurrealConfigNode(RED) {
       minConnections: this.minConnections,
       maxConnections: this.maxConnections,
       healthCheckIntervalMs: this.healthCheckIntervalMs,
+      healthCheckTimeoutMs: this.healthCheckTimeoutMs,
       retryAttempts: this.retryAttempts,
       retryDelayMs: this.retryDelayMs,
+      acquireTimeoutMs: this.acquireTimeoutMs,
+      operationTimeoutMs: this.operationTimeoutMs,
       validateConnection: this.validateConnection,
       tokenRefreshSkewSec: this.tokenRefreshSkewSec
     });

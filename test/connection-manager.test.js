@@ -77,6 +77,36 @@ test("ConnectionManager.execute destroys client on connection error", async () =
   assert.equal(destroyed, true);
 });
 
+test("ConnectionManager.execute times out operation and destroys client", async () => {
+  const manager = new ConnectionManager({
+    url: "ws://unused",
+    operationTimeoutMs: 10
+  });
+  const fakeClient = { id: "c-timeout" };
+
+  let destroyed = false;
+  manager.start = async () => {};
+  manager.pool = {
+    acquire: async () => fakeClient,
+    release: () => {},
+    destroyClient: async (client) => {
+      destroyed = client === fakeClient;
+    }
+  };
+
+  await assert.rejects(
+    manager.execute(
+      async () =>
+        new Promise(() => {
+          // never resolves
+        })
+    ),
+    /timed out/
+  );
+
+  assert.equal(destroyed, true);
+});
+
 test("ConnectionManager.query delegates to execute with default vars", async () => {
   const manager = new ConnectionManager({ url: "ws://unused" });
   const calls = [];

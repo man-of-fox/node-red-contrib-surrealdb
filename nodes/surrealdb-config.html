@@ -11,8 +11,11 @@
       minConnections: { value: 1, required: true, validate: RED.validators.number() },
       maxConnections: { value: 5, required: true, validate: RED.validators.number() },
       healthCheckIntervalMs: { value: 30000, required: true, validate: RED.validators.number() },
+      healthCheckTimeoutMs: { value: 2000, required: true, validate: RED.validators.number() },
       retryAttempts: { value: 5, required: true, validate: RED.validators.number() },
       retryDelayMs: { value: 1000, required: true, validate: RED.validators.number() },
+      acquireTimeoutMs: { value: 30000, required: true, validate: RED.validators.number() },
+      operationTimeoutMs: { value: 30000, required: true, validate: RED.validators.number() },
       validateConnection: { value: true },
       tokenRefreshSkewSec: { value: 60, required: true, validate: RED.validators.number() }
     },
@@ -75,12 +78,24 @@
     <input type="number" id="node-config-input-healthCheckIntervalMs" />
   </div>
   <div class="form-row">
+    <label for="node-config-input-healthCheckTimeoutMs">Health Timeout (ms)</label>
+    <input type="number" id="node-config-input-healthCheckTimeoutMs" />
+  </div>
+  <div class="form-row">
     <label for="node-config-input-retryAttempts">Retry Attempts</label>
     <input type="number" id="node-config-input-retryAttempts" />
   </div>
   <div class="form-row">
     <label for="node-config-input-retryDelayMs">Retry Delay (ms)</label>
     <input type="number" id="node-config-input-retryDelayMs" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-acquireTimeoutMs">Acquire Timeout (ms)</label>
+    <input type="number" id="node-config-input-acquireTimeoutMs" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-operationTimeoutMs">Operation Timeout (ms)</label>
+    <input type="number" id="node-config-input-operationTimeoutMs" />
   </div>
   <div class="form-row">
     <label for="node-config-input-validateConnection">Validate Connection</label>
@@ -100,7 +115,8 @@
     <li><code>namespace</code> und <code>database</code></li>
     <li><code>authType</code>: <code>credentials</code> oder <code>token</code></li>
     <li>Pool: <code>minConnections</code>, <code>maxConnections</code></li>
-    <li>Resilience: <code>healthCheckIntervalMs</code>, <code>retryAttempts</code>, <code>retryDelayMs</code></li>
+    <li>Resilience: <code>healthCheckIntervalMs</code>, <code>healthCheckTimeoutMs</code>, <code>retryAttempts</code>, <code>retryDelayMs</code></li>
+    <li>Timeouts: <code>acquireTimeoutMs</code>, <code>operationTimeoutMs</code></li>
     <li>Token-Handling: <code>tokenRefreshSkewSec</code></li>
   </ul>
   <h3>Hinweis</h3>

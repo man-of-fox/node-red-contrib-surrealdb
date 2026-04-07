@@ -41,6 +41,21 @@ test("SimplePool waits when max reached and resolves on release", async () => {
   assert.equal(reused, client);
 });
 
+test("SimplePool acquire times out when pool is exhausted", async () => {
+  let created = 0;
+  const pool = new SimplePool({
+    min: 0,
+    max: 1,
+    acquireTimeoutMs: 20,
+    create: async () => ({ id: ++created }),
+    destroy: async () => {}
+  });
+
+  const client = await pool.acquire();
+  await assert.rejects(pool.acquire(), /Pool acquire timed out/);
+  pool.release(client);
+});
+
 test("SimplePool destroys invalid clients and creates replacement", async () => {
   let created = 0;
   const destroyed = [];
