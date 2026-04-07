@@ -119,6 +119,29 @@
     <li>Timeouts: <code>acquireTimeoutMs</code>, <code>operationTimeoutMs</code></li>
     <li>Token-Handling: <code>tokenRefreshSkewSec</code></li>
   </ul>
+  <h3>Timeouts und empfohlene Bereiche</h3>
+  <ul>
+    <li>
+      <code>retryDelayMs</code>: Verzögerung zwischen Reconnect-Versuchen.
+      Typisch: <code>500 - 3000</code> ms, Startwert: <code>1000</code> ms.
+    </li>
+    <li>
+      <code>healthCheckIntervalMs</code>: Intervall für Verbindungsprüfung.
+      Typisch: <code>5000 - 60000</code> ms, Startwert: <code>10000</code> ms.
+    </li>
+    <li>
+      <code>healthCheckTimeoutMs</code>: Maximale Dauer für Ping/Health-Check.
+      Typisch: <code>1000 - 5000</code> ms, Startwert: <code>2000</code> ms.
+    </li>
+    <li>
+      <code>acquireTimeoutMs</code>: Maximale Wartezeit auf freien Pool-Client.
+      Typisch: <code>5000 - 30000</code> ms, Startwert: <code>10000</code> ms.
+    </li>
+    <li>
+      <code>operationTimeoutMs</code>: Maximale Dauer für einzelne DB-Operationen.
+      Typisch: <code>10000 - 120000</code> ms, Startwert: <code>30000</code> ms.
+    </li>
+  </ul>
   <h3>Hinweis</h3>
   <p>
     Für lokale Tests ohne Auth in SurrealDB können <code>username</code>, <code>password</code> und
