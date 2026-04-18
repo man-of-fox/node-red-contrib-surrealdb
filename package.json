@@ -3,8 +3,13 @@
   "version": "0.2.10",
   "description": "Node-RED palette for SurrealDB (tested with SurrealDB v2.6.x, surrealdb JS SDK v1.x) with resilient connection handling",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/man-of-fox/node-red-contrib-surrealdb.git"
+  },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
   },
   "main": "index.js",
   "keywords": [
