@@ -47,10 +47,14 @@
       "prettier --write"
     ]
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "surrealdb": "^1.0.0"
   },
   "node-red": {
+    "version": ">=4.0.0",
     "nodes": {
       "surrealdb-config": "nodes/surrealdb-config.js",
       "surrealdb-insert": "nodes/surrealdb-insert.js",
