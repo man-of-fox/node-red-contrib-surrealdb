@@ -2,8 +2,10 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { Surreal } = require("surrealdb");
+const { Surreal, Table } = require("surrealdb");
+const WebSocket = require("ws");
 const ConnectionManager = require("../../lib/connection-manager");
+const { toSdkTarget } = require("../../nodes/_shared");
 
 const DB_CONFIG = {
   url: process.env.SURREALDB_URL || "ws://127.0.0.1:8000/rpc",
@@ -37,12 +39,12 @@ test("ConnectionManager integration: create/select/upsert/delete lifecycle", asy
   const table = `it_items_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
 
   const created = await manager.execute((client) =>
-    client.create(table, { name: "alpha", count: 1 })
+    client.create(new Table(table)).content({ name: "alpha", count: 1 })
   );
   const createdRow = firstRow(created);
   assert.ok(createdRow, "expected created row");
 
-  const recordId = createdRow.id;
+  const recordId = toSdkTarget(String(createdRow.id));
   assert.ok(recordId, "expected a record id");
 
   const selected = await manager.execute((client) => client.select(recordId));
@@ -50,11 +52,28 @@ test("ConnectionManager integration: create/select/upsert/delete lifecycle", asy
   assert.equal(selectedRow.name, "alpha");
   assert.equal(selectedRow.count, 1);
 
-  await manager.execute((client) => client.upsert(recordId, { name: "beta", count: 2 }));
+  await manager.execute((client) => client.upsert(recordId).content({ name: "beta", count: 2 }));
   const updated = await manager.execute((client) => client.select(recordId));
   const updatedRow = firstRow(updated);
   assert.equal(updatedRow.name, "beta");
   assert.equal(updatedRow.count, 2);
+
+  await manager.execute((client) => client.update(recordId).merge({ active: true }));
+  const merged = await manager.execute((client) => client.select(recordId));
+  assert.equal(merged.name, "beta");
+  assert.equal(merged.active, true);
+  await manager.execute((client) =>
+    client.update(recordId).patch([{ op: "replace", path: "/count", value: 3 }])
+  );
+  const patched = await manager.execute((client) => client.select(recordId));
+  assert.equal(patched.count, 3);
+  assert.equal(patched.name, "beta");
+
+  await manager.execute((client) => client.update(recordId).content({ name: "replacement" }));
+  const replaced = await manager.execute((client) => client.select(recordId));
+  assert.equal(replaced.name, "replacement");
+  assert.equal(replaced.count, undefined);
+  assert.equal(replaced.active, undefined);
 
   await manager.execute((client) => client.delete(recordId));
   const deleted = await manager.execute((client) => client.select(recordId));
@@ -74,7 +93,7 @@ async function waitForDatabase(config, timeoutMs) {
   let lastError = null;
 
   while (Date.now() < deadline) {
-    const client = new Surreal();
+    const client = new Surreal({ websocketImpl: WebSocket });
     try {
       await client.connect(config.url);
       if (config.username && config.password) {
@@ -88,7 +107,7 @@ async function waitForDatabase(config, timeoutMs) {
         });
       }
       await useDb(client, config.namespace, config.database);
-      await client.ping();
+      await client.query("RETURN true;");
       await client.close();
       return;
     } catch (err) {
@@ -147,3 +166,72 @@ function firstResult(value) {
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+test("ConnectionManager integration: insert, table targets, and relations", async () => {
+  const suffix = `${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+  const table = new Table(`it_people_${suffix}`);
+  const relation = new Table(`it_knows_${suffix}`);
+  try {
+    const rows = await manager.execute((client) =>
+      client.insert(table, [{ name: "Ada" }, { name: "Grace" }])
+    );
+    assert.equal(rows.length, 2);
+    const edges = await manager.execute((client) =>
+      client.relate(rows[0].id, relation, rows[1].id, { weight: 10 })
+    );
+    assert.equal(firstRow(edges).weight, 10);
+    const selected = await manager.execute((client) => client.select(table));
+    assert.equal(selected.length, 2);
+    await manager.execute((client) => client.delete(table));
+    assert.deepEqual(await manager.execute((client) => client.select(table)), []);
+  } finally {
+    await manager.query(`REMOVE TABLE ${relation}; REMOVE TABLE ${table};`);
+  }
+});
+
+test(
+  "ConnectionManager integration: managed live events and unsubscribe",
+  { timeout: 15000 },
+  async () => {
+    const table = new Table(`it_live_${Date.now()}_${Math.floor(Math.random() * 1000000)}`);
+    let handle;
+    const events = [];
+    const errors = [];
+    try {
+      await manager.query(`DEFINE TABLE ${table};`);
+      handle = await manager.registerLive({
+        table: String(table),
+        onEvent: (event) => events.push(event),
+        onError: (error) => errors.push(error)
+      });
+      const [row] = await manager.execute((client) =>
+        client.create(table).content({ name: "Ada" })
+      );
+      await manager.execute((client) => client.update(row.id).merge({ active: true }));
+      await manager.execute((client) => client.delete(row.id));
+      const deadline = Date.now() + 5000;
+      while (events.length < 3 && errors.length === 0 && Date.now() < deadline) {
+        await sleep(25);
+      }
+      assert.deepEqual(errors, []);
+      assert.deepEqual(
+        events.map((event) => event.action),
+        ["CREATE", "UPDATE", "DELETE"]
+      );
+      assert.equal(events[0].result.name, "Ada");
+      assert.equal(events[1].value.active, true);
+      assert.ok(events.every((event) => event.subscriptionId === handle.subscriptionId));
+      await manager.unsubscribeLive(handle.key);
+      await manager.execute((client) =>
+        client.create(table).content({ name: "After unsubscribe" })
+      );
+      await sleep(100);
+      assert.equal(events.length, 3);
+    } finally {
+      if (handle) {
+        await manager.unsubscribeLive(handle.key);
+      }
+      await manager.query(`REMOVE TABLE ${table};`);
+    }
+  }
+);

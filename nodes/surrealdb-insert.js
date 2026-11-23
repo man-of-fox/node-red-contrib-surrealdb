@@ -1,6 +1,6 @@
 "use strict";
 
-const { setupNodeInput, resolveTable } = require("./_shared");
+const { setupNodeInput, resolveTable, toSdkTarget } = require("./_shared");
 
 module.exports = function registerSurrealInsertNode(RED) {
   function SurrealInsertNode(config) {
@@ -15,9 +15,9 @@ module.exports = function registerSurrealInsertNode(RED) {
       const data = msg.payload;
       return manager.execute((client) => {
         if (mode === "create") {
-          return client.create(table, data);
+          return client.create(toSdkTarget(table)).content(data);
         }
-        return client.insert(table, data);
+        return client.insert(toSdkTarget(table), data);
       });
     });
   }

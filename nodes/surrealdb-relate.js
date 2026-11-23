@@ -1,6 +1,7 @@
 "use strict";
 
 const { setupNodeInput, toSdkTarget } = require("./_shared");
+const { RecordId, StringRecordId } = require("surrealdb");
 
 module.exports = function registerSurrealRelateNode(RED) {
   function SurrealRelateNode(config) {
@@ -16,7 +17,7 @@ module.exports = function registerSurrealRelateNode(RED) {
         throw new Error("Missing relation for relate");
       }
 
-      return manager.execute((client) => client.relate(from, relation, to, data));
+      return manager.execute((client) => client.relate(from, toSdkTarget(relation), to, data));
     });
   }
 
@@ -24,6 +25,9 @@ module.exports = function registerSurrealRelateNode(RED) {
 };
 
 function resolveRecordRef(value, label) {
+  if (value instanceof RecordId || value instanceof StringRecordId) {
+    return value;
+  }
   if (value === undefined || value === null || value === "") {
     throw new Error(`Missing ${label} for relate`);
   }

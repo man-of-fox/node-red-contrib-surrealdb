@@ -168,9 +168,7 @@ Updates records with one of three behaviors.
 
 ### Official docs
 
-- JS SDK `.merge()`: https://surrealdb.com/docs/sdk/javascript/methods/merge
-- JS SDK `.update()`: https://surrealdb.com/docs/sdk/javascript/methods/update
-- JS SDK `.patch()`: https://surrealdb.com/docs/sdk/javascript/methods/patch
+- JS SDK `.update().merge()`, `.content()`, and `.patch()`: https://surrealdb.com/docs/reference/javascript/api/queries/update-promise
 - SurrealQL `UPDATE`: https://surrealdb.com/docs/surrealql/statements/update
 
 ## `surrealdb-select`
@@ -309,10 +307,12 @@ Starts/stops a live subscription for a table.
 ### Output behavior
 
 - On start: emits ack payload with subscription metadata
-- On live events: emits event payloads from SurrealDB notifications
+- On live events: emits `action`, `value`, `recordId`, `queryId`, and a string `subscriptionId`.
+  `result` aliases `value` for existing flows. The SDK restores managed subscriptions after reconnects.
+  The subscription ID can change after a reconnect.
 - On stop: emits ack payload with `stopped: true`
 
 ### Official docs
 
-- JS SDK `.live()`: https://surrealdb.com/docs/sdk/javascript/methods/live
+- JS SDK managed live subscriptions: https://surrealdb.com/docs/reference/javascript/concepts/live-queries
 - SurrealQL `LIVE SELECT`: https://surrealdb.com/docs/surrealql/statements/live

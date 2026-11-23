@@ -1,7 +1,7 @@
 "use strict";
 
 const { getManager } = require("./_manager-registry");
-const { StringRecordId } = require("surrealdb");
+const { RecordId, StringRecordId, Table } = require("surrealdb");
 
 function setupNodeInput(node, RED, config, handler) {
   node.on("input", async (msg, send, done) => {
@@ -61,7 +61,13 @@ function resolveTarget(nodeConfig, msg) {
 }
 
 function normalizeRecordId(value) {
+  if (value instanceof RecordId || value instanceof StringRecordId) {
+    return String(value);
+  }
   if (value && typeof value === "object") {
+    if (typeof value.table === "string" && value.id !== undefined && value.id !== null) {
+      return `${value.table}:${String(value.id)}`;
+    }
     if (typeof value.tb === "string" && value.id !== undefined && value.id !== null) {
       return `${value.tb}:${String(value.id)}`;
     }
@@ -75,7 +81,7 @@ function toSdkTarget(target) {
     return target;
   }
   if (!target.includes(":")) {
-    return target;
+    return new Table(target);
   }
   return new StringRecordId(target);
 }

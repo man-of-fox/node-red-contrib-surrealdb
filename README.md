@@ -4,8 +4,10 @@ Node-RED palette for SurrealDB with robust connection handling, token refresh, r
 
 ## Compatibility
 
-- SurrealDB server: tested with `v2.6.x` (integration tests currently pinned to `v2.6.1`)
-- SurrealDB JavaScript SDK: `v1.x`
+- Node.js: `>=18.0.0` (WebSocket support is provided by `ws`)
+- Node-RED: `>=4.0.0`
+- SurrealDB server: integration tests pinned to `v4.0.1`
+- SurrealDB JavaScript SDK: `2.2.2`
 
 ## Goals
 
@@ -140,7 +142,7 @@ Start SurrealDB container:
 docker compose up -d surrealdb
 ```
 
-The compose setup pins SurrealDB to `v2.6.1` (SDK-compatible) and runs in `--unauthenticated` mode for deterministic CI integration tests.
+The compose setup pins SurrealDB to `v4.0.1` and runs in `--unauthenticated` mode for deterministic CI integration tests.
 
 Run integration tests:
 

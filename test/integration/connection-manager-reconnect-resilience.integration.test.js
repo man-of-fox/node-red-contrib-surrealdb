@@ -3,6 +3,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { Surreal } = require("surrealdb");
+const WebSocket = require("ws");
 const ConnectionManager = require("../../lib/connection-manager");
 
 const DB_CONFIG = {
@@ -49,11 +50,11 @@ async function waitForDatabase(config, timeoutMs) {
   let lastError = null;
 
   while (Date.now() < deadline) {
-    const client = new Surreal();
+    const client = new Surreal({ websocketImpl: WebSocket });
     try {
       await client.connect(config.url);
       await useDb(client, config.namespace, config.database);
-      await client.ping();
+      await client.query("RETURN true;");
       await client.close();
       return;
     } catch (err) {

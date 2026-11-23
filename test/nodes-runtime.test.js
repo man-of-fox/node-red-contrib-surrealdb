@@ -662,6 +662,63 @@ test("runtime live node: stop unsubscribes active subscription", async () => {
   assert.equal(stopMsg.payload.stopped, true);
 });
 
+for (const scenario of [
+  {
+    type: "surrealdb-modify",
+    mode: "patch",
+    method: "patch",
+    payload: [{ op: "replace", path: "/name", value: "Ada" }]
+  },
+  { type: "surrealdb-upsert", method: "upsert", payload: { name: "Ada" } }
+]) {
+  test(`runtime ${scenario.type}: ${scenario.method} passes content to SDK builder`, async () => {
+    const result = { id: "users:1", name: "Ada" };
+    const manager = createFakeManager({ queryResult: result });
+    const node = requireNodeWithSharedStub(`../nodes/${scenario.type}.js`, manager);
+    await loadFlow(
+      [node],
+      [
+        {
+          id: "n1",
+          type: scenario.type,
+          connection: "cfg",
+          table: "users",
+          recordId: "1",
+          mode: scenario.mode,
+          wires: [["n2"]]
+        },
+        { id: "n2", type: "helper" }
+      ]
+    );
+    const received = onceInput(helper.getNode("n2"));
+    helper.getNode("n1").receive({ payload: scenario.payload });
+    const msg = await received;
+    assert.deepEqual(manager.calls, [
+      { method: scenario.method, args: ["users:1", scenario.payload] }
+    ]);
+    assert.deepEqual(msg.payload, result);
+  });
+}
+
+test("runtime relate node: accepts SDK record IDs from previous results", async () => {
+  const { RecordId } = require("surrealdb");
+  const from = new RecordId("users", "Ada Lovelace");
+  const to = new RecordId("users", "Grace Hopper");
+  const manager = createFakeManager({ queryResult: [] });
+  const node = requireNodeWithSharedStub("../nodes/surrealdb-relate.js", manager);
+  await loadFlow(
+    [node],
+    [
+      { id: "n1", type: "surrealdb-relate", connection: "cfg", relation: "knows", wires: [["n2"]] },
+      { id: "n2", type: "helper" }
+    ]
+  );
+  const received = onceInput(helper.getNode("n2"));
+  helper.getNode("n1").receive({ from, to, payload: { weight: 10 } });
+  await received;
+  assert.deepEqual(manager.calls[0].args, [from, "knows", to, { weight: 10 }]);
+});
+
 function requireNodeWithSharedStub(nodeModulePath, manager) {
   const nodePath = require.resolve(nodeModulePath);
   delete require.cache[nodePath];
@@ -753,12 +810,16 @@ function createFakeManager(options = {}) {
           }
           return options.queryResult;
         },
-        create(table, data) {
-          self.calls.push({ method: "create", args: [table, data] });
-          if (options.executeError) {
-            throw options.executeError;
-          }
-          return options.queryResult;
+        create(table) {
+          return {
+            content(data) {
+              self.calls.push({ method: "create", args: [table, data] });
+              if (options.executeError) {
+                throw options.executeError;
+              }
+              return options.queryResult;
+            }
+          };
         },
         select(target) {
           self.calls.push({ method: "select", args: [target] });
@@ -774,33 +835,33 @@ function createFakeManager(options = {}) {
           }
           return options.queryResult;
         },
-        upsert(target, data) {
-          self.calls.push({ method: "upsert", args: [target, data] });
-          if (options.executeError) {
-            throw options.executeError;
-          }
-          return options.queryResult;
+        upsert(target) {
+          return {
+            content(data) {
+              self.calls.push({ method: "upsert", args: [target, data] });
+              if (options.executeError) {
+                throw options.executeError;
+              }
+              return options.queryResult;
+            }
+          };
         },
-        update(target, data) {
-          self.calls.push({ method: "update", args: [target, data] });
-          if (options.executeError) {
-            throw options.executeError;
-          }
-          return options.queryResult;
-        },
-        merge(target, data) {
-          self.calls.push({ method: "merge", args: [target, data] });
-          if (options.executeError) {
-            throw options.executeError;
-          }
-          return options.queryResult;
-        },
-        patch(target, data) {
-          self.calls.push({ method: "patch", args: [target, data] });
-          if (options.executeError) {
-            throw options.executeError;
-          }
-          return options.queryResult;
+        update(target) {
+          return Object.fromEntries(
+            ["content", "merge", "patch"].map((strategy) => [
+              strategy,
+              (data) => {
+                self.calls.push({
+                  method: strategy === "content" ? "update" : strategy,
+                  args: [target, data]
+                });
+                if (options.executeError) {
+                  throw options.executeError;
+                }
+                return options.queryResult;
+              }
+            ])
+          );
         },
         relate(from, relation, to, data) {
           self.calls.push({ method: "relate", args: [from, relation, to, data] });

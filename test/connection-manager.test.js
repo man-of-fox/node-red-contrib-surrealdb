@@ -4,10 +4,12 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const Module = require("node:module");
 
+const { Table } = require("surrealdb");
+
 const originalLoad = Module._load;
 Module._load = function patchedLoad(request, parent, isMain) {
   if (request === "surrealdb") {
-    return { Surreal: class SurrealMock {} };
+    return { Surreal: class SurrealMock {}, Table };
   }
   return originalLoad.call(this, request, parent, isMain);
 };
@@ -150,4 +152,91 @@ test("ConnectionManager.stop drains pool and sets state", async () => {
   assert.equal(manager.healthTimer, null);
   assert.equal(manager.tokenTimer, null);
   assert.deepEqual(status[status.length - 1], { state: "disconnected", text: "disconnected" });
+});
+
+test("managed live subscriptions translate events and track the current query ID", async () => {
+  const manager = new ConnectionManager({ url: "ws://unused" });
+  manager.start = async () => {};
+  const events = [];
+  let handler;
+  let unsubscribed = false;
+  let killed = false;
+  let closed = false;
+  const live = {
+    id: "initial-id",
+    subscribe(callback) {
+      handler = callback;
+      return () => {
+        unsubscribed = true;
+      };
+    },
+    async kill() {
+      killed = true;
+    }
+  };
+  manager._connectWithRetry = async () => ({
+    async live(table) {
+      assert.ok(table instanceof Table);
+      assert.equal(String(table), "users");
+      return live;
+    },
+    async close() {
+      closed = true;
+    }
+  });
+  const handle = await manager.registerLive({
+    table: "users",
+    onEvent: (event) => events.push(event)
+  });
+  assert.equal(handle.subscriptionId, "initial-id");
+  live.id = "reconnected-id";
+  assert.equal(handle.subscriptionId, "reconnected-id");
+  const value = { name: "Ada" };
+  handler({ queryId: live.id, action: "CREATE", recordId: "users:ada", value });
+  assert.deepEqual(events, [
+    {
+      queryId: "reconnected-id",
+      action: "CREATE",
+      recordId: "users:ada",
+      value,
+      subscriptionId: "reconnected-id",
+      result: value
+    }
+  ]);
+  assert.equal(await manager.unsubscribeLive(handle.key), true);
+  assert.ok(unsubscribed && killed && closed);
+  handler({ queryId: live.id, action: "UPDATE", value: {} });
+  assert.equal(events.length, 1);
+  assert.equal(manager.liveSubscriptions.size, 0);
+});
+
+test("failed live registration closes its dedicated connection", async () => {
+  const manager = new ConnectionManager({ url: "ws://unused" });
+  manager.start = async () => {};
+  let closed = false;
+  manager._connectWithRetry = async () => ({
+    async live() {
+      throw new Error("live rejected");
+    },
+    async close() {
+      closed = true;
+    }
+  });
+  await assert.rejects(manager.registerLive({ table: "users", onEvent() {} }), /live rejected/);
+  assert.ok(closed);
+  assert.equal(manager.liveSubscriptions.size, 0);
+});
+
+test("credentials authentication and refresh retain SDK 2 access tokens", async () => {
+  const manager = new ConnectionManager({ username: "root", password: "root" });
+  let sequence = 0;
+  const client = {
+    async signin() {
+      return { access: `token-${++sequence}` };
+    }
+  };
+  await manager._authenticate(client);
+  assert.equal(manager.tokenManager.getToken(), "token-1");
+  await manager._refreshToken(client);
+  assert.equal(manager.tokenManager.getToken(), "token-2");
 });

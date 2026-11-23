@@ -12,7 +12,7 @@ module.exports = function registerSurrealUpsertNode(RED) {
         throw new Error("Missing table or recordId for upsert");
       }
       const data = msg.payload;
-      return manager.execute((client) => client.upsert(toSdkTarget(target), data));
+      return manager.execute((client) => client.upsert(toSdkTarget(target)).content(data));
     });
   }
 

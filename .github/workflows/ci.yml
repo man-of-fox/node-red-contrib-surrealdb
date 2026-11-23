@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [18.x, 20.x, 22.x]
 
     steps:
       - name: Checkout
@@ -43,7 +43,7 @@ jobs:
 
     services:
       surrealdb:
-        image: surrealdb/surrealdb:v2.6.1
+        image: surrealdb/surrealdb:v4.0.1
         ports:
           - 8000:8000
         command: >-
@@ -61,7 +61,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 22.x
+          node-version: 18.x
           cache: "npm"
 
       - name: Install dependencies
@@ -76,7 +76,7 @@ jobs:
 
     services:
       surrealdb:
-        image: surrealdb/surrealdb:v2.6.1
+        image: surrealdb/surrealdb:v4.0.1
         ports:
           - 8000:8000
         command: >-
@@ -111,13 +111,13 @@ jobs:
 
     services:
       surrealdb:
-        image: surrealdb/surrealdb:v2.6.1
+        image: surrealdb/surrealdb:v4.0.1
         ports:
           - 8000:8000
         command: >-
           start --log info --unauthenticated memory
       surrealdb-auth:
-        image: surrealdb/surrealdb:v2.6.1
+        image: surrealdb/surrealdb:v4.0.1
         ports:
           - 8001:8000
         command: >-

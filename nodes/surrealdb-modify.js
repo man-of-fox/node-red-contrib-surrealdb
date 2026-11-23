@@ -21,12 +21,12 @@ module.exports = function registerSurrealModifyNode(RED) {
 
       return manager.execute((client) => {
         if (mode === "update") {
-          return client.update(sdkTarget, data);
+          return client.update(sdkTarget).content(data);
         }
         if (mode === "patch") {
-          return client.patch(sdkTarget, data);
+          return client.update(sdkTarget).patch(data);
         }
-        return client.merge(sdkTarget, data);
+        return client.update(sdkTarget).merge(data);
       });
     });
   }
